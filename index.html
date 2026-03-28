@@ -766,10 +766,11 @@ const STORAGE_KEY = "cb-drinks-v2"; // localStorage fallback key
 // Chave de acesso X já configurada abaixo.
 // Falta só: criar o Bin em jsonbin.io e colar o BIN ID abaixo.
 const JSONBIN_BIN_ID  = "69c72d5cc3097a1dd56a9164";
-const JSONBIN_API_KEY = "$2a$10$g78bDb1Dnfya.H2RaE5F.ex/HEkGO/TkiGK5O11KmpByzlpB5IWpq";  // Chave de acesso X
+const JSONBIN_API_KEY    = "$2a$10$g78bDb1Dnfya.H2RaE5F.ex/HEkGO/TkiGK5O11KmpByzlpB5IWpq"; // Chave de acesso X
+const JSONBIN_MASTER_KEY = "$2a$10$/0kgtOPVQRCObMQgxKT4VuP6ff98.UHhn09JM78o59QI9x4CYWW26";  // Master Key
 // ────────────────────────────────────────────────────────────
 
-const USE_CLOUD = JSONBIN_BIN_ID !== "SEU_BIN_ID_AQUI" && JSONBIN_API_KEY !== "SEU_API_KEY_AQUI";
+const USE_CLOUD = JSONBIN_BIN_ID !== "SEU_BIN_ID_AQUI" && JSONBIN_MASTER_KEY !== "SEU_MASTER_KEY_AQUI";
 
 // ============================================================
 // CARDÁPIO DE LANCHES
@@ -795,25 +796,23 @@ let selectedEmoji   = "🥤";
 // ============================================================
 
 async function loadDrinks() {
-  // 1. tenta cloud
   if (USE_CLOUD) {
     try {
       const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' }
+        headers: { 'X-Master-Key': JSONBIN_MASTER_KEY, 'X-Bin-Meta': 'false' }
       });
       if (res.ok) {
         const data = await res.json();
-        // JSONBin devolve o valor direto quando X-Bin-Meta: false
         const drinks = Array.isArray(data) ? data : (data.record || []);
-        // espelha no localStorage para uso offline
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch(_) {}
         return drinks;
+      } else {
+        console.warn('[CB] loadDrinks HTTP', res.status);
       }
     } catch(e) {
       console.warn('[CB] Cloud load falhou, usando localStorage:', e);
     }
   }
-  // 2. fallback local
   try {
     const val = localStorage.getItem(STORAGE_KEY);
     if (val) return JSON.parse(val);
@@ -823,20 +822,22 @@ async function loadDrinks() {
 
 async function saveDrinks(drinks) {
   const json = JSON.stringify(drinks);
-  // 1. tenta cloud
   if (USE_CLOUD) {
     try {
       const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-Master-Key': JSONBIN_API_KEY,
+          'X-Master-Key': JSONBIN_MASTER_KEY,
           'X-Bin-Versioning': 'false'
         },
         body: json
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      // espelha local
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        console.error(`[CB] saveDrinks HTTP ${res.status}:`, body);
+        throw new Error(`HTTP ${res.status}: ${body}`);
+      }
       try { localStorage.setItem(STORAGE_KEY, json); } catch(_) {}
       return true;
     } catch(e) {
@@ -844,11 +845,8 @@ async function saveDrinks(drinks) {
       return false;
     }
   }
-  // 2. fallback local (sem cloud configurado)
   try {
     localStorage.setItem(STORAGE_KEY, json);
-    const verify = localStorage.getItem(STORAGE_KEY);
-    if (!verify) throw new Error('verify failed');
     return true;
   } catch(e) {
     console.error('[CB] localStorage save falhou:', e);
