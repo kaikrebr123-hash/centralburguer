@@ -765,7 +765,7 @@ const STORAGE_KEY = "cb-drinks-v2"; // localStorage fallback key
 // Master Key (have-mestre): $2a$10$/0kgtOPVQRCObMQgxKT4VuP6ff98.UHhn09JM78o59QI9x4CYWW26
 // Chave de acesso X já configurada abaixo.
 // Falta só: criar o Bin em jsonbin.io e colar o BIN ID abaixo.
-const JSONBIN_BIN_ID  = "69c72d5cc3097a1dd56a9164";
+const JSONBIN_BIN_ID  = "69c7333ec3097a1dd56aaba0";
 const JSONBIN_API_KEY    = "$2a$10$g78bDb1Dnfya.H2RaE5F.ex/HEkGO/TkiGK5O11KmpByzlpB5IWpq"; // Chave de acesso X
 const JSONBIN_MASTER_KEY = "$2a$10$/0kgtOPVQRCObMQgxKT4VuP6ff98.UHhn09JM78o59QI9x4CYWW26";  // Master Key
 // ────────────────────────────────────────────────────────────
@@ -798,17 +798,25 @@ let selectedEmoji   = "🥤";
 async function loadDrinks() {
   if (USE_CLOUD) {
     try {
-      const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': JSONBIN_MASTER_KEY, 'X-Bin-Meta': 'false' }
-      });
+      // Bin público: não precisa de chave para leitura
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`);
       if (res.ok) {
         const data = await res.json();
         const drinks = Array.isArray(data) ? data : (data.record || []);
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch(_) {}
         return drinks;
-      } else {
-        console.warn('[CB] loadDrinks HTTP', res.status);
       }
+      // se falhou sem auth, tenta com master key (bin ainda privado)
+      const res2 = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`, {
+        headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+      });
+      if (res2.ok) {
+        const data = await res2.json();
+        const drinks = Array.isArray(data) ? data : (data.record || []);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch(_) {}
+        return drinks;
+      }
+      console.warn('[CB] loadDrinks HTTP', res2.status);
     } catch(e) {
       console.warn('[CB] Cloud load falhou, usando localStorage:', e);
     }
@@ -829,7 +837,8 @@ async function saveDrinks(drinks) {
         headers: {
           'Content-Type': 'application/json',
           'X-Master-Key': JSONBIN_MASTER_KEY,
-          'X-Bin-Versioning': 'false'
+          'X-Bin-Versioning': 'false',
+          'X-Bin-Private': 'false'
         },
         body: json
       });
