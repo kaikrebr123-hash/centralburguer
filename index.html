@@ -607,7 +607,7 @@
         <i class="fas fa-store owner-header-icon"></i>
         <div>
           <div class="owner-header-title">Bebidas do Dia</div>
-          <span class="owner-header-sub">Gerencie o estoque disponível</span>
+          <span class="owner-header-sub" id="storageModeBadge">Gerencie o estoque disponível</span>
         </div>
       </div>
       <button class="owner-close-btn" id="ownerCloseBtn"><i class="fas fa-times"></i></button>
@@ -756,10 +756,20 @@
 
 <script>
 // ============================================================
-// CONFIG — altere o PIN aqui
+// CONFIG — altere o PIN e as chaves do JSONBin aqui
 // ============================================================
 const OWNER_PIN   = "1234";
-const STORAGE_KEY = "cb-drinks-v2";
+const STORAGE_KEY = "cb-drinks-v2"; // localStorage fallback key
+
+// ── JSONBin.io ──────────────────────────────────────────────
+// Master Key (have-mestre): $2a$10$/0kgtOPVQRCObMQgxKT4VuP6ff98.UHhn09JM78o59QI9x4CYWW26
+// Chave de acesso X já configurada abaixo.
+// Falta só: criar o Bin em jsonbin.io e colar o BIN ID abaixo.
+const JSONBIN_BIN_ID  = "69c72d5cc3097a1dd56a9164";
+const JSONBIN_API_KEY = "$2a$10$g78bDb1Dnfya.H2RaE5F.ex/HEkGO/TkiGK5O11KmpByzlpB5IWpq";  // Chave de acesso X
+// ────────────────────────────────────────────────────────────
+
+const USE_CLOUD = JSONBIN_BIN_ID !== "SEU_BIN_ID_AQUI" && JSONBIN_API_KEY !== "SEU_API_KEY_AQUI";
 
 // ============================================================
 // CARDÁPIO DE LANCHES
@@ -781,25 +791,67 @@ let ownerDrafts     = [];       // rascunho no painel do dono
 let selectedEmoji   = "🥤";
 
 // ============================================================
-// STORAGE (compartilhado entre dono e clientes)
+// STORAGE — cloud (JSONBin) com fallback para localStorage
 // ============================================================
+
 async function loadDrinks() {
+  // 1. tenta cloud
+  if (USE_CLOUD) {
+    try {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // JSONBin devolve o valor direto quando X-Bin-Meta: false
+        const drinks = Array.isArray(data) ? data : (data.record || []);
+        // espelha no localStorage para uso offline
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch(_) {}
+        return drinks;
+      }
+    } catch(e) {
+      console.warn('[CB] Cloud load falhou, usando localStorage:', e);
+    }
+  }
+  // 2. fallback local
   try {
     const val = localStorage.getItem(STORAGE_KEY);
     if (val) return JSON.parse(val);
   } catch(e) {}
   return [];
 }
+
 async function saveDrinks(drinks) {
+  const json = JSON.stringify(drinks);
+  // 1. tenta cloud
+  if (USE_CLOUD) {
+    try {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': JSONBIN_API_KEY,
+          'X-Bin-Versioning': 'false'
+        },
+        body: json
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // espelha local
+      try { localStorage.setItem(STORAGE_KEY, json); } catch(_) {}
+      return true;
+    } catch(e) {
+      console.error('[CB] Cloud save falhou:', e);
+      return false;
+    }
+  }
+  // 2. fallback local (sem cloud configurado)
   try {
-    const data = JSON.stringify(drinks);
-    localStorage.setItem(STORAGE_KEY, data);
-    // Verify it was actually saved
+    localStorage.setItem(STORAGE_KEY, json);
     const verify = localStorage.getItem(STORAGE_KEY);
-    if (!verify) throw new Error('Verification failed');
+    if (!verify) throw new Error('verify failed');
     return true;
   } catch(e) {
-    console.error('[Central Burguer] saveDrinks error:', e);
+    console.error('[CB] localStorage save falhou:', e);
     return false;
   }
 }
@@ -1133,6 +1185,8 @@ function openOwner() {
   document.getElementById('ownerMain').classList.remove('visible');
   document.getElementById('pinScreen').style.display = 'flex';
   document.getElementById('ownerOverlay').classList.add('open');
+  const badge = document.getElementById('storageModeBadge');
+  if (badge) badge.textContent = USE_CLOUD ? '☁️ Nuvem ativa — visível p/ todos' : '⚠️ Modo local — configure JSONBin';
 }
 
 document.getElementById('pinCloseBtn').addEventListener('click', () => document.getElementById('ownerOverlay').classList.remove('open'));
@@ -1268,7 +1322,9 @@ document.getElementById('publishBtn').addEventListener('click', async () => {
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
   } else {
-    alert('Erro ao salvar. Verifique a conexão.');
+    alert(USE_CLOUD
+  ? 'Erro ao salvar na nuvem. Verifique sua conexão e as chaves do JSONBin no arquivo.'
+  : 'Erro ao salvar localmente. Tente novamente.');
   }
 });
 
