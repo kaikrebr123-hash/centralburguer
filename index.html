@@ -6,6 +6,7 @@ v3.01
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Central Burguer · Hamburgueria Artesanal</title>
+  <link rel="icon" type="image/jpeg" href="Logo%20correta.jpeg?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
@@ -723,8 +724,62 @@ v3.01
       line-height: 1.6;
     }
 
-    /* ===== DRINK STEP CLIENTE ===== */
-    .drinks-loading {
+    /* ===== PAGAMENTO ===== */
+    .pay-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pay-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .pay-card:hover {
+      transform: translateY(-2px);
+    }
+    .pay-card.selected {
+      border-color: var(--accent);
+      background: rgba(232, 201, 106, .04);
+    }
+    .pay-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text);
+      flex-shrink: 0;
+      transition: color .2s, background .2s;
+    }
+    .pay-card.selected .pay-icon {
+      color: #000;
+      background: var(--accent);
+    }
+    .pay-info {
+      flex: 1;
+    }
+    .pay-name {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .pay-desc {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ===== DRINK STEP CLIENTE ===== */    .drinks-loading {
       text-align: center;
       padding: 40px 20px;
       color: var(--muted);
@@ -2076,7 +2131,9 @@ v3.01
         </div>
         <div class="step-item" data-step="4"><span class="step-number">4</span><span class="step-label">Bebida</span>
         </div>
-        <div class="step-item" data-step="5"><span class="step-number">5</span><span class="step-label">Revisão</span>
+        <div class="step-item" data-step="5"><span class="step-number">5</span><span class="step-label">Pagamento</span>
+        </div>
+        <div class="step-item" data-step="6"><span class="step-number">6</span><span class="step-label">Revisão</span>
         </div>
       </div>
 
@@ -2129,6 +2186,47 @@ v3.01
         </div>
         <div id="drinksContent">
           <div class="drinks-loading"><i class="fas fa-circle-notch"></i><span>Carregando...</span></div>
+        </div>
+      </div>
+
+      <!-- STAGE PAGAMENTO -->
+      <div id="stage-pagamento" class="stage-panel" style="display:none;">
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-wallet"></i></span>Pagamento</div>
+        <p class="stage-desc">Como você gostaria de pagar na entrega?</p>
+        
+        <div class="pay-grid">
+          <div class="pay-card" data-pay="Pix">
+            <div class="pay-icon"><i class="fab fa-pix"></i></div>
+            <div class="pay-info">
+              <div class="pay-name">Pix</div>
+              <div class="pay-desc">Rápido e prático</div>
+            </div>
+          </div>
+          <div class="pay-card" data-pay="Cartão">
+            <div class="pay-icon"><i class="fas fa-credit-card"></i></div>
+            <div class="pay-info">
+              <div class="pay-name">Cartão</div>
+              <div class="pay-desc">Crédito ou débito (levamos a máquina)</div>
+            </div>
+          </div>
+          <div class="pay-card" data-pay="Dinheiro">
+            <div class="pay-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="pay-info">
+              <div class="pay-name">Dinheiro</div>
+              <div class="pay-desc">Pague em espécie na entrega</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="trocoSection" style="display:none; margin-top:16px;">
+          <div class="form-group">
+            <label>Troco para quanto?</label>
+            <input type="number" id="payTroco" placeholder="Ex: 50 ou deixe em branco">
+          </div>
+        </div>
+
+        <div id="payError" class="error-msg" style="display:none;">
+          <i class="fas fa-triangle-exclamation"></i> Escolha uma forma de pagamento para continuar.
         </div>
       </div>
 
@@ -2438,20 +2536,36 @@ v3.01
     // ============================================================
     // WIZARD
     // ============================================================
+    let selectedPayment = null;
+    document.querySelectorAll('.pay-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedPayment = card.dataset.pay;
+        document.getElementById('payError').style.display = 'none';
+        if (selectedPayment === 'Dinheiro') {
+          document.getElementById('trocoSection').style.display = 'block';
+        } else {
+          document.getElementById('trocoSection').style.display = 'none';
+          document.getElementById('payTroco').value = '';
+        }
+      });
+    });
+
     function updateWizard() {
       document.querySelectorAll('.step-item').forEach((el, i) => {
         el.classList.remove('active', 'completed');
         if (i + 1 < currentStep) el.classList.add('completed');
         if (i + 1 === currentStep) el.classList.add('active');
       });
-      const labels = ['Continuar', 'Continuar', 'Continuar', 'Continuar', 'Enviar pelo WhatsApp'];
-      const icons = ['fa-arrow-right', 'fa-arrow-right', 'fa-arrow-right', 'fa-arrow-right', 'fa-whatsapp'];
-      const fab = currentStep === 5 ? 'fab' : 'fas';
+      const labels = ['Continuar', 'Continuar', 'Continuar', 'Continuar', 'Continuar', 'Enviar pelo WhatsApp'];
+      const icons = ['fa-arrow-right', 'fa-arrow-right', 'fa-arrow-right', 'fa-arrow-right', 'fa-arrow-right', 'fa-whatsapp'];
+      const fab = currentStep === 6 ? 'fab' : 'fas';
       document.getElementById('nextButton').innerHTML = `${labels[currentStep - 1]} <i class="${fab} ${icons[currentStep - 1]}"></i>`;
     }
 
     function showStage(n) {
-      ['stage1', 'stage-adicionais', 'stage2', 'stage3', 'stage4'].forEach((id, i) => {
+      ['stage1', 'stage-adicionais', 'stage2', 'stage3', 'stage-pagamento', 'stage4'].forEach((id, i) => {
         document.getElementById(id).style.display = i + 1 === n ? 'block' : 'none';
       });
       currentStep = n;
@@ -2459,7 +2573,7 @@ v3.01
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (n === 2) renderAdicionaisPorBurger();
       if (n === 4) renderDrinks();
-      if (n === 5) buildReview();
+      if (n === 6) buildReview();
     }
 
     // ============================================================
@@ -2611,10 +2725,20 @@ v3.01
       });
       if (!addHtml) addHtml = `<div class="review-item"><span class="review-item-key">Adicionais</span><span class="review-item-val">Nenhum</span></div>`;
 
+      let payHtml = '';
+      if (selectedPayment === 'Dinheiro') {
+        const troco = document.getElementById('payTroco').value.trim();
+        const tStr = troco ? `(Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')})` : '(Sem troco)';
+        payHtml = `<div class="review-item"><span class="review-item-key">Dinheiro</span><span class="review-item-val">${tStr}</span></div>`;
+      } else {
+        payHtml = `<div class="review-item"><span class="review-item-key">${selectedPayment || '—'}</span><span class="review-item-val">Na entrega</span></div>`;
+      }
+
       rDiv.innerHTML = `
     <div class="review-card"><div class="review-section-title">🍔 Lanches</div>${lHtml}</div>
     <div class="review-card"><div class="review-section-title">➕ Adicionais</div>${addHtml}</div>
     <div class="review-card"><div class="review-section-title">🥤 Bebidas</div>${dHtml}</div>
+    <div class="review-card"><div class="review-section-title">💳 Pagamento</div>${payHtml}</div>
     <div class="review-card">
       <div class="review-section-title">📋 Entrega</div>
       <div class="review-item"><span class="review-item-key">Nome</span><span class="review-item-val">${nome}</span></div>
@@ -2644,12 +2768,34 @@ v3.01
         document.getElementById('dataError').style.display = ok ? 'none' : 'flex';
         return !!ok;
       }
+      if (n === 5) {
+        const errorEl = document.getElementById('payError');
+        if (!selectedPayment) {
+          errorEl.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Escolha uma forma de pagamento para continuar.';
+          errorEl.style.display = 'flex';
+          return false;
+        }
+        
+        if (selectedPayment === 'Dinheiro') {
+          const trocoVal = parseFloat(document.getElementById('payTroco').value.trim());
+          const total = cartTotal() + drinksTotal() + adicionaisTotal();
+          
+          if (!isNaN(trocoVal) && trocoVal < total) {
+            errorEl.innerHTML = `<i class="fas fa-triangle-exclamation"></i> O valor do troco não pode ser menor que o total do pedido (R$ ${total.toFixed(2).replace('.',',')}).`;
+            errorEl.style.display = 'flex';
+            return false;
+          }
+        }
+        
+        errorEl.style.display = 'none';
+        return true;
+      }
       return true;
     }
 
     document.getElementById('nextButton').addEventListener('click', () => {
       if (!validateStep(currentStep)) return;
-      if (currentStep === 5) { sendWhatsApp(); return; }
+      if (currentStep === 6) { sendWhatsApp(); return; }
       showStage(currentStep + 1);
     });
 
@@ -2697,6 +2843,13 @@ v3.01
 
       const total = (cartTotal() + drinksTotal() + adicionaisTotal()).toFixed(2).replace('.', ',');
 
+      let payStr = selectedPayment;
+      if (selectedPayment === 'Dinheiro') {
+        const troco = document.getElementById('payTroco').value.trim();
+        if (troco) payStr += ` (Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')})`;
+        else payStr += ' (Sem troco)';
+      }
+
       let msg =
         `🍔🔥 *PEDIDO — CENTRAL BURGUER* 🔥🍔
 ━━━━━━━━━━━━━━━━━━━━━━━
@@ -2719,6 +2872,7 @@ ${drinksLines}`;
       msg +=
         `
 ━━━━━━━━━━━━━━━━━━━━━━━
+💳 *Pagamento:* ${payStr}
 💰 *TOTAL DO PEDIDO: R$ ${total}*
 ━━━━━━━━━━━━━━━━━━━━━━━
 _Pedido enviado via Central Burguer App_ ✅`;
