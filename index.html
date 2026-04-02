@@ -381,12 +381,17 @@
     .wizard-bar {
       display: flex;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       background: var(--surface);
       border-radius: var(--radius);
       padding: 6px;
       border: 1px solid var(--border);
-      overflow: hidden;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .wizard-bar::-webkit-scrollbar {
+      display: none;
     }
 
     .step-item {
@@ -457,7 +462,7 @@
 
     /* ===== STAGE PANELS ===== */
     .stage-panel {
-      margin-bottom: 100px;
+      margin-bottom: 140px; /* Mais espaço para o cta-bar celular n cobrir os ultimos itens */
       animation: fadeInSlide .35s ease both;
     }
 
@@ -516,6 +521,11 @@
       transition: border-color .25s, transform .25s, box-shadow .25s;
       animation: fade-up .35s ease both;
       box-shadow: 0 2px 16px rgba(0, 0, 0, .35);
+      cursor: pointer;
+    }
+
+    .burger-card:active {
+      transform: scale(0.98);
     }
 
     .burger-card:hover {
@@ -2447,8 +2457,7 @@
       <div id="stage-adicionais" class="stage-panel" style="display:none;">
         <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-plus-circle"></i></span>Adicionais
         </div>
-        <p class="stage-desc">Marque os extras por lanche — <strong>agora é o momento</strong> de turbinar antes do
-          pedido seguir. Quem deixa passar fica só na vontade.</p>
+        <p class="stage-desc">Quer adicionar algo mais? Marque opções extras abaixo para cada lanche. (Opcional)</p>
         <div id="adicionaisContent"></div>
       </div>
 
@@ -2473,6 +2482,10 @@
           <input type="text" id="clientName" placeholder="Ex: João Silva" autocomplete="name">
         </div>
         <div class="form-group">
+          <label><span class="required-dot"></span> WhatsApp / Telefone</label>
+          <input type="tel" id="clientPhone" placeholder="(XX) 9XXXX-XXXX" autocomplete="tel">
+        </div>
+        <div class="form-group">
           <label><span class="required-dot"></span> Endereço de entrega</label>
           <input type="text" id="clientAddress" placeholder="Rua, número, bairro" autocomplete="street-address">
         </div>
@@ -2485,7 +2498,7 @@
           <input type="text" id="clientObs" placeholder="Sem cebola, ponto da carne...">
         </div>
         <div id="dataError" class="error-msg" style="display:none;">
-          <i class="fas fa-triangle-exclamation"></i> Preencha nome e endereço para continuar.
+          <i class="fas fa-triangle-exclamation"></i> Preencha nome, telefone e endereço para continuar.
         </div>
       </div>
 
@@ -2515,15 +2528,18 @@
             <div class="pay-icon"><i class="fas fa-money-bill-wave"></i></div>
             <div class="pay-info">
               <div class="pay-name">Dinheiro</div>
-              <div class="pay-desc">Pague em espécie na entrega</div>
+              <div class="pay-desc">Pague em espécie (Troco devolvido no Pix)</div>
             </div>
           </div>
         </div>
 
         <div id="trocoSection" style="display:none; margin-top:16px;">
-          <div class="form-group">
-            <label>Troco para quanto?</label>
-            <input type="number" id="payTroco" placeholder="Ex: 50 ou deixe em branco">
+          <div class="form-group" style="padding: 12px; border: 1px solid var(--accent); border-radius: 8px; background: var(--accent-soft);">
+            <label style="color: var(--text);">Precisa de troco para quanto?</label>
+            <input type="number" id="payTroco" placeholder="Ex: 50 ou deixe em branco se não precisar">
+            <span style="font-size: .7rem; color: var(--accent); display: block; margin-top: 6px;">
+               <i class="fas fa-info-circle"></i> O motoboy não leva cédulas. O saldo voltará pra você no Pix!
+            </span>
           </div>
         </div>
 
@@ -2796,6 +2812,28 @@
     window.addEventListener('load', async () => {
       availableDrinks = await loadDrinks();
       adicionaisOwnerConfig = loadAdicionaisOwnerConfig();
+
+      // Carregar dados salvos do cliente (para não precisar digitar novamente)
+      try {
+        const savedInfo = localStorage.getItem('cb-client-info-v1');
+        if (savedInfo) {
+          const info = JSON.parse(savedInfo);
+          if (info.name) document.getElementById('clientName').value = info.name;
+          if (info.phone) document.getElementById('clientPhone').value = info.phone;
+          if (info.address) document.getElementById('clientAddress').value = info.address;
+          if (info.ref) document.getElementById('clientRef').value = info.ref;
+        }
+      } catch (e) {}
+
+      // Máscara para o telefone (coloca () e - automático)
+      const phoneInput = document.getElementById('clientPhone');
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function (e) {
+          let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+          e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+      }
+
       setTimeout(() => {
         const loader = document.getElementById('loader');
         loader.style.opacity = '0';
@@ -2862,8 +2900,14 @@
       </div>`;
         el.appendChild(card);
       });
-      el.querySelectorAll('.incr:not([disabled])').forEach(b => b.addEventListener('click', () => changeQty(+b.dataset.id, 1)));
-      el.querySelectorAll('.decr').forEach(b => b.addEventListener('click', () => changeQty(+b.dataset.id, -1)));
+      el.querySelectorAll('.incr:not([disabled])').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(+b.dataset.id, 1); }));
+      el.querySelectorAll('.decr').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(+b.dataset.id, -1); }));
+      el.querySelectorAll('.burger-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const btn = card.querySelector('.incr');
+          if (btn && !btn.disabled) changeQty(+btn.dataset.id, 1);
+        });
+      });
     }
 
     function changeQty(id, d) {
@@ -2925,7 +2969,8 @@
       });
       wrap.innerHTML = html;
       wrap.querySelectorAll('.adicional-card[data-bid]').forEach(card => {
-        card.querySelector('.adicional-toggle').addEventListener('click', () => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
           const bid = card.dataset.bid, aid = card.dataset.aid;
           if (!adicionaisState[bid]) adicionaisState[bid] = {};
           adicionaisState[bid][aid] = !adicionaisState[bid][aid];
@@ -3193,8 +3238,9 @@
         rDiv.innerHTML = `<div class="error-msg"><i class="fas fa-triangle-exclamation"></i> Carrinho vazio.</div>`;
         tDiv.innerHTML = ''; return;
       }
-      const nome = document.getElementById('clientName')?.value.trim() || '—';
-      const end = document.getElementById('clientAddress')?.value.trim() || '—';
+      const nome = document.getElementById('clientName')?.value.trim() || '-';
+      const phone = document.getElementById('clientPhone')?.value.trim() || '-';
+      const end = document.getElementById('clientAddress')?.value.trim() || '-';
       const ref = document.getElementById('clientRef')?.value.trim() || '';
       const obs = document.getElementById('clientObs')?.value.trim() || '';
 
@@ -3239,8 +3285,9 @@
     <div class="review-card"><div class="review-section-title">💳 Pagamento</div>${payHtml}</div>
     <div class="review-card">
       <div class="review-section-title">📋 Entrega</div>
-      <div class="review-item"><span class="review-item-key">Frete</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>
+      <div class="review-item"><span class="review-item-key">Entrega</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>
       <div class="review-item"><span class="review-item-key">Nome</span><span class="review-item-val">${nome}</span></div>
+      <div class="review-item"><span class="review-item-key">WhatsApp</span><span class="review-item-val">${phone}</span></div>
       <div class="review-item"><span class="review-item-key">Endereço</span><span class="review-item-val">${end}</span></div>
       ${ref ? `<div class="review-item"><span class="review-item-key">Referência</span><span class="review-item-val">${ref}</span></div>` : ''}
       ${obs ? `<div class="review-item"><span class="review-item-key">Observação</span><span class="review-item-val">${obs}</span></div>` : ''}
@@ -3263,7 +3310,7 @@
         document.getElementById('emptyCartError').style.display = 'none'; return true;
       }
       if (n === 4) {
-        const ok = document.getElementById('clientName').value.trim() && document.getElementById('clientAddress').value.trim();
+        const ok = document.getElementById('clientName').value.trim() && document.getElementById('clientPhone').value.trim() && document.getElementById('clientAddress').value.trim();
         document.getElementById('dataError').style.display = ok ? 'none' : 'flex';
         return !!ok;
       }
@@ -3313,13 +3360,21 @@
     function sendWhatsApp() {
       if (cart.length === 0) { alert("Carrinho vazio!"); return; }
       const nome = document.getElementById('clientName').value.trim();
+      const phone = document.getElementById('clientPhone').value.trim();
       const end = document.getElementById('clientAddress').value.trim();
-      if (!nome || !end) { alert("Preencha nome e endereço."); showStage(4); return; }
+      if (!nome || !phone || !end) { alert("Preencha nome, telefone e endereço."); showStage(4); return; }
 
       const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
       const data = new Date().toLocaleDateString('pt-BR');
       const obs = document.getElementById('clientObs').value.trim();
       const ref = document.getElementById('clientRef').value.trim();
+
+      // Salvar os dados do cliente para a próxima vez sair automático
+      try {
+        localStorage.setItem('cb-client-info-v1', JSON.stringify({
+          name: nome, phone: phone, address: end, ref: ref
+        }));
+      } catch (e) {}
 
       // Lanches
       const itemsLines = cart.map(i => `   • ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.', ',')}`).join('\n');
@@ -3331,7 +3386,7 @@
         const ativos = ADICIONAIS_LIST.filter(a => adds[a.id] && adicionaisOwnerConfig[a.id] !== false);
         if (ativos.length) {
           addMsg += `   ${item.quantity}× ${item.name}:\n`;
-          ativos.forEach(a => { addMsg += `     • ${a.emoji} ${a.name} — R$ ${(a.price * item.quantity).toFixed(2).replace('.', ',')}\n`; });
+          ativos.forEach(a => { addMsg += `     • ${a.name} — R$ ${(a.price * item.quantity).toFixed(2).replace('.', ',')}\n`; });
         }
       });
       const addLines = addMsg.trim() || '   • Nenhum';
@@ -3340,7 +3395,7 @@
       const drinksLines = Object.entries(selectedDrinks).length
         ? Object.entries(selectedDrinks).map(([id, qty]) => {
           const d = availableDrinks.find(x => x.id === id);
-          return d ? `   • ${qty}x ${d.emoji} ${d.name}` + (d.price > 0 ? ` — R$ ${(parseFloat(d.price) * qty).toFixed(2).replace('.', ',')}` : ' (incluso)') : '';
+          return d ? `   • ${qty}x ${d.name}` + (d.price > 0 ? ` — R$ ${(parseFloat(d.price) * qty).toFixed(2).replace('.', ',')}` : ' (incluso)') : '';
         }).filter(Boolean).join('\n')
         : '   • Nenhuma';
 
@@ -3349,35 +3404,36 @@
       let payStr = selectedPayment;
       if (selectedPayment === 'Dinheiro') {
         const troco = document.getElementById('payTroco').value.trim();
-        if (troco) payStr += ` (Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')})`;
+        if (troco) payStr += ` (Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')} -> *Mandar via Pix na entrega*)`;
         else payStr += ' (Sem troco)';
       }
 
       let msg =
-        `🍔🔥 *PEDIDO — CENTRAL BURGER* 🔥🍔
+        `*PEDIDO — CENTRAL BURGER*
 ━━━━━━━━━━━━━━━━━━━━━━━
-🕒 *Horário:* ${hora} | ${data}
-👤 *Cliente:* ${nome}
-📍 *Endereço:* ${end}`;
-      if (ref) msg += `\n📌 *Referência:* ${ref}`;
-      msg += `\n🚚 *Entrega:* GRÁTIS (sem taxa de frete)`;
+*Horário:* ${hora} | ${data}
+*Cliente:* ${nome}
+*WhatsApp:* ${phone}
+*Endereço:* ${end}`;
+      if (ref) msg += `\n*Referência:* ${ref}`;
+      msg += `\n*Entrega:* GRÁTIS`;
       msg +=
         `
 ━━━━━━━━━━━━━━━━━━━━━━━
-🍔 *LANCHES:*
+*LANCHES:*
 ${itemsLines}
 
-➕ *ADICIONAIS:*
+*ADICIONAIS:*
 ${addLines}
 
-🥤 *BEBIDAS:*
+*BEBIDAS:*
 ${drinksLines}`;
-      if (obs) msg += `\n\n📝 *Observações:* ${obs}`;
+      if (obs) msg += `\n\n*Observações:* ${obs}`;
       msg +=
         `
 ━━━━━━━━━━━━━━━━━━━━━━━
-💳 *Pagamento:* ${payStr}
-💰 *TOTAL DO PEDIDO: R$ ${total}*
+*Pagamento:* ${payStr}
+*TOTAL DO PEDIDO: R$ ${total}*
 ━━━━━━━━━━━━━━━━━━━━━━━
 _Pedido enviado via Central Burger App_ ✅`;
 
