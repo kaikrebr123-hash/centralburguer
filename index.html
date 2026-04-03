@@ -623,7 +623,7 @@
 
     .card-top {
       display: flex;
-      height: 140px;
+      min-height: 140px;
     }
 
     .card-img {
@@ -2213,6 +2213,48 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* ===== PIX OVERLAY ===== */
+    .pix-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .pix-overlay.open { display: flex; animation: fade-up .25s ease both; }
+    .pix-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); width: 100%; max-width: 340px;
+      padding: 24px 20px; position: relative; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .pix-modal-close {
+      position: absolute; top: 16px; right: 16px; background: var(--surface2);
+      border: 1px solid var(--border2); width: 34px; height: 34px;
+      border-radius: 50%; color: var(--text); display: flex;
+      align-items: center; justify-content: center; cursor: pointer;
+    }
+    .pix-icon-large { font-size: 3rem; color: var(--wa); margin-bottom: 12px; }
+    .pix-modal-title { font-family: var(--display); font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+    .pix-modal-desc { color: var(--muted); font-size: .95rem; margin-bottom: 20px; }
+    .pix-modal-desc strong { color: var(--accent); }
+    .pix-key-box {
+      background: rgba(37, 211, 102, 0.08); border: 1px dashed var(--wa);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    }
+    .pix-key-label { font-size: .8rem; color: var(--text); font-weight: 700; margin-bottom: 8px; }
+    .pix-key-box input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); font-family: var(--sans); font-weight: 800; font-size: 1.1rem;
+      padding: 10px; border-radius: 10px; text-align: center; outline: none; margin-bottom: 10px;
+    }
+    .btn-copy-modal {
+      background: var(--wa); color: #000; border: none; border-radius: 10px;
+      width: 100%; padding: 12px; font-weight: 800; font-family: var(--display);
+      font-size: 1.05rem; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: transform .2s;
+    }
+    .btn-copy-modal:active { transform: scale(.97); }
+    .pix-modal-footer { font-size: .75rem; color: var(--dim); line-height: 1.4; }
+    
     /* ===== DESKTOP ===== */
     @media(min-width:600px) {
       .app-body {
@@ -2268,6 +2310,29 @@
     <div class="loader-brand">CENTRAL BURGER</div>
     <div class="loader-sub">hamburgueria artesanal</div>
     <div class="loader-bar"></div>
+  </div>
+
+  <!-- PIX Overlay -->
+  <div class="pix-overlay" id="pixOverlayModal">
+    <div class="pix-modal">
+      <button class="pix-modal-close" id="pixModalClose"><i class="fas fa-times"></i></button>
+      <div class="pix-icon-large"><i class="fab fa-pix"></i></div>
+      <div class="pix-modal-title">Pagamento via Pix</div>
+      <div class="pix-modal-desc">Valor: <strong id="pixModalValue">R$ 0,00</strong></div>
+      
+      <div class="pix-key-box">
+         <div class="pix-key-label">Chave Pix (CNPJ)</div>
+         <input type="text" value="62742258000110" id="pixModalKey" readonly>
+         <button id="pixModalCopyBtn" class="btn-copy-modal"><i class="fas fa-copy" id="pixModalCopyIcon"></i> Copiar Chave</button>
+      </div>
+      
+      <div class="pix-modal-footer">
+        Falta pouco! Copie a chave e faça o pagamento no seu banco. (O motoboy também leva o QR Code)
+      </div>
+      <button class="btn-next btn-next--whatsapp" style="margin-top:16px; padding: 12px; width: 100%; border-radius:12px; font-size: 1.1rem; justify-content: center;" id="pixModalOkBtn">
+        Tudo Certo
+      </button>
+    </div>
   </div>
 
   <!-- ============================================================
@@ -2517,6 +2582,8 @@
               <div class="pay-desc">Rápido e prático</div>
             </div>
           </div>
+
+
           <div class="pay-card" data-pay="Cartão">
             <div class="pay-icon"><i class="fas fa-credit-card"></i></div>
             <div class="pay-info">
@@ -2921,8 +2988,14 @@
       }
       if (ex) {
         const nq = ex.quantity + d;
-        if (nq <= 0) { cart = cart.filter(i => i.id !== id); delete adicionaisState[String(id)]; }
-        else ex.quantity = nq;
+        if (nq <= 0) {
+          cart = cart.filter(i => i.id !== id);
+          Object.keys(adicionaisState).forEach(k => { if (k.startsWith(id + '_')) delete adicionaisState[k]; });
+        }
+        else {
+          ex.quantity = nq;
+          if (d < 0) delete adicionaisState[`${id}_${nq}`];
+        }
       }
       else if (d > 0) {
         if (m.active && m.stock > 0) cart.push({ ...m, quantity: 1 });
@@ -2950,30 +3023,50 @@
       }
       let html = '';
       cart.forEach(item => {
-        const bid = String(item.id);
-        if (!adicionaisState[bid]) adicionaisState[bid] = {};
-        html += `<div class="adicional-burger-block">
-      <div class="adicional-burger-header">${item.quantity}× ${item.name}</div>
+        const origBid = String(item.id);
+        for (let i = 0; i < item.quantity; i++) {
+          const bid = `${origBid}_${i}`;
+          if (!adicionaisState[bid]) adicionaisState[bid] = {};
+          const title = item.quantity > 1 ? `${i + 1}º ${item.name}` : item.name;
+          html += `<div class="adicional-burger-block">
+      <div class="adicional-burger-header">${title}</div>
       <div class="adicional-list">`;
-        enabled.forEach(a => {
-          const on = !!adicionaisState[bid][a.id];
-          html += `<div class="adicional-card active ${on ? 'toggled-on' : ''}" data-bid="${bid}" data-aid="${a.id}">
+          enabled.forEach(a => {
+            const qty = adicionaisState[bid][a.id] || 0;
+            const on = qty > 0;
+            html += `<div class="adicional-card active ${on ? 'toggled-on' : ''}" data-bid="${bid}" data-aid="${a.id}">
         <div class="adicional-left">
           <div class="adicional-emoji">${a.emoji}</div>
           <div><div class="adicional-name">${a.name}</div><div class="adicional-price">+ R$ ${a.price.toFixed(2).replace('.', ',')}</div></div>
         </div>
-        <div class="adicional-toggle ${on ? 'on' : ''}"></div>
+        <div class="drink-qty-ctrl" style="flex-shrink:0;">
+          <button class="drink-qty-btn aqd" data-bid="${bid}" data-aid="${a.id}">−</button>
+          <span class="drink-qty-num" style="${on ? 'color:var(--accent);' : 'color:var(--text);'}">${qty}</span>
+          <button class="drink-qty-btn aqi" data-bid="${bid}" data-aid="${a.id}">+</button>
+        </div>
       </div>`;
-        });
-        html += `</div></div>`;
+          });
+          html += `</div></div>`;
+        }
       });
       wrap.innerHTML = html;
-      wrap.querySelectorAll('.adicional-card[data-bid]').forEach(card => {
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', () => {
-          const bid = card.dataset.bid, aid = card.dataset.aid;
+      wrap.querySelectorAll('.aqi').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const bid = btn.dataset.bid, aid = btn.dataset.aid;
           if (!adicionaisState[bid]) adicionaisState[bid] = {};
-          adicionaisState[bid][aid] = !adicionaisState[bid][aid];
+          adicionaisState[bid][aid] = (adicionaisState[bid][aid] || 0) + 1;
+          renderAdicionaisPorBurger();
+        });
+      });
+      wrap.querySelectorAll('.aqd').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const bid = btn.dataset.bid, aid = btn.dataset.aid;
+          if (!adicionaisState[bid]) adicionaisState[bid] = {};
+          if (adicionaisState[bid][aid] > 0) {
+            adicionaisState[bid][aid] -= 1;
+          }
           renderAdicionaisPorBurger();
         });
       });
@@ -2983,10 +3076,12 @@
     function hasAnyAdicionaisSelected() {
       let any = false;
       cart.forEach(item => {
-        const adds = adicionaisState[String(item.id)] || {};
-        ADICIONAIS_LIST.forEach(a => {
-          if (adds[a.id] && adicionaisOwnerConfig[a.id] !== false) any = true;
-        });
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          ADICIONAIS_LIST.forEach(a => {
+            if ((adds[a.id] || 0) > 0 && adicionaisOwnerConfig[a.id] !== false) any = true;
+          });
+        }
       });
       return any;
     }
@@ -2994,10 +3089,13 @@
     function adicionaisTotal() {
       let t = 0;
       cart.forEach(item => {
-        const adds = adicionaisState[String(item.id)] || {};
-        ADICIONAIS_LIST.forEach(a => {
-          if (adds[a.id] && adicionaisOwnerConfig[a.id] !== false) t += a.price * item.quantity;
-        });
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          ADICIONAIS_LIST.forEach(a => {
+            const qty = adds[a.id] || 0;
+            if (qty > 0 && adicionaisOwnerConfig[a.id] !== false) t += a.price * qty;
+          });
+        }
       });
       return t;
     }
@@ -3031,7 +3129,33 @@
           document.getElementById('trocoSection').style.display = 'none';
           document.getElementById('payTroco').value = '';
         }
+        
+        if (selectedPayment === 'Pix') {
+          const total = cartTotal() + drinksTotal() + adicionaisTotal();
+          document.getElementById('pixModalValue').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+          document.getElementById('pixOverlayModal').classList.add('open');
+        }
       });
+    });
+
+    const pixModalCopyBtn = document.getElementById('pixModalCopyBtn');
+    if (pixModalCopyBtn) {
+      pixModalCopyBtn.addEventListener('click', () => {
+        const input = document.getElementById('pixModalKey');
+        input.select();
+        input.setSelectionRange(0, 99999); 
+        document.execCommand("copy");
+        const icon = document.getElementById('pixModalCopyIcon');
+        icon.className = 'fas fa-check';
+        setTimeout(() => { icon.className = 'fas fa-copy'; }, 2000);
+      });
+    }
+
+    document.getElementById('pixModalClose').addEventListener('click', () => {
+      document.getElementById('pixOverlayModal').classList.remove('open');
+    });
+    document.getElementById('pixModalOkBtn').addEventListener('click', () => {
+      document.getElementById('pixOverlayModal').classList.remove('open');
     });
 
     function updateWizard() {
@@ -3258,13 +3382,20 @@
       // Adicionais por lanche
       let addHtml = '';
       cart.forEach(item => {
-        const adds = adicionaisState[String(item.id)] || {};
-        const ativos = ADICIONAIS_LIST.filter(a => adds[a.id] && adicionaisOwnerConfig[a.id] !== false);
-        if (ativos.length) {
-          addHtml += `<div class="review-item" style="flex-direction:column;align-items:flex-start;gap:4px">`;
-          addHtml += `<span class="review-item-key" style="color:var(--accent)">${item.quantity}× ${item.name}</span>`;
-          ativos.forEach(a => { addHtml += `<span style="font-size:.75rem;color:var(--muted);padding-left:8px">${a.emoji} ${a.name} — R$ ${(a.price * item.quantity).toFixed(2).replace('.', ',')}</span>`; });
-          addHtml += `</div>`;
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          const ativos = ADICIONAIS_LIST.filter(a => (adds[a.id] || 0) > 0 && adicionaisOwnerConfig[a.id] !== false);
+          if (ativos.length) {
+            addHtml += `<div class="review-item" style="flex-direction:column;align-items:flex-start;gap:4px">`;
+            const title = item.quantity > 1 ? `${i+1}º ${item.name}` : item.name;
+            addHtml += `<span class="review-item-key" style="color:var(--accent)">${title}</span>`;
+            ativos.forEach(a => {
+              const qty = adds[a.id];
+              const qtyStr = qty > 1 ? `${qty}× ` : '';
+              addHtml += `<span style="font-size:.75rem;color:var(--muted);padding-left:8px">${qtyStr}${a.emoji} ${a.name} — R$ ${(a.price * qty).toFixed(2).replace('.', ',')}</span>`;
+            });
+            addHtml += `</div>`;
+          }
         }
       });
       if (!addHtml) addHtml = `<div class="review-item"><span class="review-item-key">Adicionais</span><span class="review-item-val">Nenhum</span></div>`;
@@ -3382,11 +3513,18 @@
       // Adicionais por lanche
       let addMsg = '';
       cart.forEach(item => {
-        const adds = adicionaisState[String(item.id)] || {};
-        const ativos = ADICIONAIS_LIST.filter(a => adds[a.id] && adicionaisOwnerConfig[a.id] !== false);
-        if (ativos.length) {
-          addMsg += `   ${item.quantity}× ${item.name}:\n`;
-          ativos.forEach(a => { addMsg += `     • ${a.name} — R$ ${(a.price * item.quantity).toFixed(2).replace('.', ',')}\n`; });
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          const ativos = ADICIONAIS_LIST.filter(a => (adds[a.id] || 0) > 0 && adicionaisOwnerConfig[a.id] !== false);
+          if (ativos.length) {
+            const title = item.quantity > 1 ? `${i+1}º ${item.name}` : item.name;
+            addMsg += `   ${title}:\n`;
+            ativos.forEach(a => {
+              const qty = adds[a.id];
+              const qtyStr = qty > 1 ? `${qty}× ` : '';
+              addMsg += `     • ${qtyStr}${a.name} — R$ ${(a.price * qty).toFixed(2).replace('.', ',')}\n`;
+            });
+          }
         }
       });
       const addLines = addMsg.trim() || '   • Nenhum';
