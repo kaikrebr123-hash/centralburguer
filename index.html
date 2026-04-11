@@ -553,7 +553,7 @@
 
     .burger-card--soldout {
       opacity: .65;
-      filter: grayscale(0.25);
+      filter: grayscale(1);
     }
 
     .burger-card--soldout .qty-btn.incr {
@@ -2502,8 +2502,7 @@
             class="step-label">Adicionais</span></div>
         <div class="step-item" data-step="3"><span class="step-number">3</span><span class="step-label">Bebidas</span>
         </div>
-        <div class="step-item" data-step="4"><span class="step-number">4</span><span class="step-label">Entrega
-            grátis</span></div>
+        <div class="step-item" data-step="4"><span class="step-number">4</span><span class="step-label">Recebimento</span></div>
         <div class="step-item" data-step="5"><span class="step-number">5</span><span class="step-label">Finalizar</span>
         </div>
       </div>
@@ -2537,11 +2536,8 @@
 
       <!-- STAGE 4: ENTREGA -->
       <div id="stage-entrega" class="stage-panel" style="display:none;">
-        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-user"></i></span>Entrega</div>
-        <div class="entrega-gratis-banner" role="status">
-          <i class="fas fa-gift" aria-hidden="true"></i>
-          <span><strong>Entrega grátis:</strong> só precisamos do seu endereço certinho pra levar quentinho até você.</span>
-        </div>
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-user"></i></span>Recebimento</div>
+        
         <div class="form-group">
           <label><span class="required-dot"></span> Nome completo</label>
           <input type="text" id="clientName" placeholder="Ex: João Silva" autocomplete="name">
@@ -2550,20 +2546,46 @@
           <label><span class="required-dot"></span> WhatsApp / Telefone</label>
           <input type="tel" id="clientPhone" placeholder="(XX) 9XXXX-XXXX" autocomplete="tel">
         </div>
-        <div class="form-group">
-          <label><span class="required-dot"></span> Endereço de entrega</label>
-          <input type="text" id="clientAddress" placeholder="Rua, número, bairro" autocomplete="street-address">
+
+        <p class="stage-desc" style="margin-top:20px; margin-bottom:12px;font-weight:bold;color:var(--text);">Como você prefere receber?</p>
+        <div class="pay-grid" style="margin-bottom: 20px;">
+          <div class="pay-card delivery-type-card selected" data-delivery="Entrega">
+             <div class="pay-icon"><i class="fas fa-motorcycle"></i></div>
+             <div class="pay-info">
+                <div class="pay-name">Entrega</div>
+                <div class="pay-desc">Levamos até você (Grátis)</div>
+             </div>
+          </div>
+          <div class="pay-card delivery-type-card" data-delivery="Retirada">
+             <div class="pay-icon"><i class="fas fa-store"></i></div>
+             <div class="pay-info">
+                <div class="pay-name">Vou Buscar</div>
+                <div class="pay-desc">Retirar no local</div>
+             </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Ponto de referência <span class="optional-tag">opcional</span></label>
-          <input type="text" id="clientRef" placeholder="Perto do mercado...">
+
+        <div id="addressFields">
+          <div class="entrega-gratis-banner" role="status" style="margin-bottom: 12px;">
+            <i class="fas fa-gift" aria-hidden="true"></i>
+            <span><strong>Entrega grátis:</strong> só precisamos do seu endereço certinho pra levar quentinho até você.</span>
+          </div>
+          <div class="form-group">
+            <label><span class="required-dot"></span> Endereço de entrega</label>
+            <input type="text" id="clientAddress" placeholder="Rua, número, bairro" autocomplete="street-address">
+          </div>
+          <div class="form-group">
+            <label>Ponto de referência <span class="optional-tag">opcional</span></label>
+            <input type="text" id="clientRef" placeholder="Perto do mercado...">
+          </div>
         </div>
+
         <div class="form-group">
           <label>Observação <span class="optional-tag">opcional</span></label>
           <input type="text" id="clientObs" placeholder="Sem cebola, ponto da carne...">
         </div>
         <div id="dataError" class="error-msg" style="display:none;">
-          <i class="fas fa-triangle-exclamation"></i> Preencha nome, telefone e endereço para continuar.
+          <i class="fas fa-triangle-exclamation"></i> Preencha os campos obrigatórios para continuar.
         </div>
       </div>
 
@@ -3117,9 +3139,20 @@
     // WIZARD
     // ============================================================
     let selectedPayment = null;
-    document.querySelectorAll('.pay-card').forEach(card => {
+    let selectedDelivery = 'Entrega';
+    
+    document.querySelectorAll('.delivery-type-card').forEach(card => {
       card.addEventListener('click', () => {
-        document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.delivery-type-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedDelivery = card.dataset.delivery;
+        document.getElementById('addressFields').style.display = selectedDelivery === 'Entrega' ? 'block' : 'none';
+      });
+    });
+
+    document.querySelectorAll('.pay-card:not(.delivery-type-card)').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.pay-card:not(.delivery-type-card)').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         selectedPayment = card.dataset.pay;
         document.getElementById('payError').style.display = 'none';
@@ -3415,12 +3448,13 @@
     <div class="review-card"><div class="review-section-title">🥤 Bebidas</div>${dHtml}</div>
     <div class="review-card"><div class="review-section-title">💳 Pagamento</div>${payHtml}</div>
     <div class="review-card">
-      <div class="review-section-title">📋 Entrega</div>
-      <div class="review-item"><span class="review-item-key">Entrega</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>
+      <div class="review-section-title">📋 Recebimento</div>
+      <div class="review-item"><span class="review-item-key">Tipo</span><span class="review-item-val" style="color:var(--accent);font-weight:800">${selectedDelivery.toUpperCase()}</span></div>
+      ${selectedDelivery === 'Entrega' ? `<div class="review-item"><span class="review-item-key">Taxa</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>` : ''}
       <div class="review-item"><span class="review-item-key">Nome</span><span class="review-item-val">${nome}</span></div>
       <div class="review-item"><span class="review-item-key">WhatsApp</span><span class="review-item-val">${phone}</span></div>
-      <div class="review-item"><span class="review-item-key">Endereço</span><span class="review-item-val">${end}</span></div>
-      ${ref ? `<div class="review-item"><span class="review-item-key">Referência</span><span class="review-item-val">${ref}</span></div>` : ''}
+      ${selectedDelivery === 'Entrega' ? `<div class="review-item"><span class="review-item-key">Endereço</span><span class="review-item-val">${end}</span></div>` : ''}
+      ${(selectedDelivery === 'Entrega' && ref) ? `<div class="review-item"><span class="review-item-key">Referência</span><span class="review-item-val">${ref}</span></div>` : ''}
       ${obs ? `<div class="review-item"><span class="review-item-key">Observação</span><span class="review-item-val">${obs}</span></div>` : ''}
     </div>`;
 
@@ -3441,7 +3475,17 @@
         document.getElementById('emptyCartError').style.display = 'none'; return true;
       }
       if (n === 4) {
-        const ok = document.getElementById('clientName').value.trim() && document.getElementById('clientPhone').value.trim() && document.getElementById('clientAddress').value.trim();
+        let isNameOk = !!document.getElementById('clientName').value.trim();
+        let isPhoneOk = !!document.getElementById('clientPhone').value.trim();
+        let ok = false;
+        
+        if (selectedDelivery === 'Entrega') {
+          let isAddrOk = !!document.getElementById('clientAddress').value.trim();
+          ok = isNameOk && isPhoneOk && isAddrOk;
+        } else {
+          ok = isNameOk && isPhoneOk;
+        }
+        
         document.getElementById('dataError').style.display = ok ? 'none' : 'flex';
         return !!ok;
       }
@@ -3493,7 +3537,8 @@
       const nome = document.getElementById('clientName').value.trim();
       const phone = document.getElementById('clientPhone').value.trim();
       const end = document.getElementById('clientAddress').value.trim();
-      if (!nome || !phone || !end) { alert("Preencha nome, telefone e endereço."); showStage(4); return; }
+      if (selectedDelivery === 'Entrega' && (!nome || !phone || !end)) { alert("Preencha nome, telefone e endereço."); showStage(4); return; }
+      if (selectedDelivery === 'Retirada' && (!nome || !phone)) { alert("Preencha nome e telefone."); showStage(4); return; }
 
       const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
       const data = new Date().toLocaleDateString('pt-BR');
@@ -3552,9 +3597,12 @@
 *Horário:* ${hora} | ${data}
 *Cliente:* ${nome}
 *WhatsApp:* ${phone}
-*Endereço:* ${end}`;
-      if (ref) msg += `\n*Referência:* ${ref}`;
-      msg += `\n*Entrega:* GRÁTIS`;
+*Recebimento:* ${selectedDelivery.toUpperCase()}`;
+      if (selectedDelivery === 'Entrega') {
+        msg += `\n*Endereço:* ${end}`;
+        if (ref) msg += `\n*Referência:* ${ref}`;
+        msg += `\n*Taxa de Entrega:* GRÁTIS`;
+      }
       msg +=
         `
 ━━━━━━━━━━━━━━━━━━━━━━━
