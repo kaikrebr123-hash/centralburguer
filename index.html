@@ -553,7 +553,7 @@
 
     .burger-card--soldout {
       opacity: .65;
-      filter: grayscale(0.25);
+      filter: grayscale(1);
     }
 
     .burger-card--soldout .qty-btn.incr {
@@ -2502,8 +2502,7 @@
             class="step-label">Adicionais</span></div>
         <div class="step-item" data-step="3"><span class="step-number">3</span><span class="step-label">Bebidas</span>
         </div>
-        <div class="step-item" data-step="4"><span class="step-number">4</span><span class="step-label">Entrega
-            grátis</span></div>
+        <div class="step-item" data-step="4"><span class="step-number">4</span><span class="step-label">Recebimento</span></div>
         <div class="step-item" data-step="5"><span class="step-number">5</span><span class="step-label">Finalizar</span>
         </div>
       </div>
@@ -2537,11 +2536,8 @@
 
       <!-- STAGE 4: ENTREGA -->
       <div id="stage-entrega" class="stage-panel" style="display:none;">
-        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-user"></i></span>Entrega</div>
-        <div class="entrega-gratis-banner" role="status">
-          <i class="fas fa-gift" aria-hidden="true"></i>
-          <span><strong>Entrega grátis:</strong> só precisamos do seu endereço certinho pra levar quentinho até você.</span>
-        </div>
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-user"></i></span>Recebimento</div>
+        
         <div class="form-group">
           <label><span class="required-dot"></span> Nome completo</label>
           <input type="text" id="clientName" placeholder="Ex: João Silva" autocomplete="name">
@@ -2550,20 +2546,46 @@
           <label><span class="required-dot"></span> WhatsApp / Telefone</label>
           <input type="tel" id="clientPhone" placeholder="(XX) 9XXXX-XXXX" autocomplete="tel">
         </div>
-        <div class="form-group">
-          <label><span class="required-dot"></span> Endereço de entrega</label>
-          <input type="text" id="clientAddress" placeholder="Rua, número, bairro" autocomplete="street-address">
+
+        <p class="stage-desc" style="margin-top:20px; margin-bottom:12px;font-weight:bold;color:var(--text);">Como você prefere receber?</p>
+        <div class="pay-grid" style="margin-bottom: 20px;">
+          <div class="pay-card delivery-type-card selected" data-delivery="Entrega">
+             <div class="pay-icon"><i class="fas fa-motorcycle"></i></div>
+             <div class="pay-info">
+                <div class="pay-name">Entrega</div>
+                <div class="pay-desc">Levamos até você (Grátis)</div>
+             </div>
+          </div>
+          <div class="pay-card delivery-type-card" data-delivery="Retirada">
+             <div class="pay-icon"><i class="fas fa-store"></i></div>
+             <div class="pay-info">
+                <div class="pay-name">Vou Buscar</div>
+                <div class="pay-desc">Retirar no local</div>
+             </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Ponto de referência <span class="optional-tag">opcional</span></label>
-          <input type="text" id="clientRef" placeholder="Perto do mercado...">
+
+        <div id="addressFields">
+          <div class="entrega-gratis-banner" role="status" style="margin-bottom: 12px;">
+            <i class="fas fa-gift" aria-hidden="true"></i>
+            <span><strong>Entrega grátis:</strong> só precisamos do seu endereço certinho pra levar quentinho até você.</span>
+          </div>
+          <div class="form-group">
+            <label><span class="required-dot"></span> Endereço de entrega</label>
+            <input type="text" id="clientAddress" placeholder="Rua, número, bairro" autocomplete="street-address">
+          </div>
+          <div class="form-group">
+            <label>Ponto de referência <span class="optional-tag">opcional</span></label>
+            <input type="text" id="clientRef" placeholder="Perto do mercado...">
+          </div>
         </div>
+
         <div class="form-group">
           <label>Observação <span class="optional-tag">opcional</span></label>
           <input type="text" id="clientObs" placeholder="Sem cebola, ponto da carne...">
         </div>
         <div id="dataError" class="error-msg" style="display:none;">
-          <i class="fas fa-triangle-exclamation"></i> Preencha nome, telefone e endereço para continuar.
+          <i class="fas fa-triangle-exclamation"></i> Preencha os campos obrigatórios para continuar.
         </div>
       </div>
 
@@ -2681,6 +2703,7 @@
     }
     function saveAdicionaisOwnerConfig(cfg) {
       try { localStorage.setItem(ADICIONAIS_OWNER_KEY, JSON.stringify(cfg)); } catch (_) { }
+      if (USE_CLOUD && typeof saveCloudData === 'function') saveCloudData();
     }
 
     // ── JSONBin.io ──────────────────────────────────────────────
@@ -2772,6 +2795,7 @@
 
     function saveBurgerState(st) {
       try { localStorage.setItem(BURGER_MENU_KEY, JSON.stringify(st)); } catch (_) { }
+      if (USE_CLOUD && typeof saveCloudData === 'function') saveCloudData();
     }
 
     let burgerState = loadBurgerState();
@@ -2805,41 +2829,75 @@
     // STORAGE — cloud (JSONBin) com fallback para localStorage
     // ============================================================
 
-    async function loadDrinks() {
+    async function loadCloudData() {
+      let data = null;
+      let needsMigration = false;
       if (USE_CLOUD) {
         try {
-          // Bin público: não precisa de chave para leitura
           const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`);
           if (res.ok) {
-            const data = await res.json();
-            const drinks = Array.isArray(data) ? data : (data.record || []);
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch (_) { }
-            return drinks;
+            data = await res.json();
+          } else {
+            const res2 = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`, {
+              headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+            });
+            if (res2.ok) data = await res2.json();
           }
-          // se falhou sem auth, tenta com master key (bin ainda privado)
-          const res2 = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`, {
-            headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-          });
-          if (res2.ok) {
-            const data = await res2.json();
-            const drinks = Array.isArray(data) ? data : (data.record || []);
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch (_) { }
-            return drinks;
-          }
-          console.warn('[CB] loadDrinks HTTP', res2.status);
         } catch (e) {
-          console.warn('[CB] Cloud load falhou, usando localStorage:', e);
+          console.warn('[CB] Cloud load falhou:', e);
         }
       }
-      try {
-        const val = localStorage.getItem(STORAGE_KEY);
-        if (val) return JSON.parse(val);
-      } catch (e) { }
-      return [];
+      if (!data) {
+        try {
+          const val = localStorage.getItem(STORAGE_KEY);
+          if (val) data = JSON.parse(val);
+        } catch (e) {}
+      }
+
+      if (data) {
+        if (Array.isArray(data)) {
+          // Formato antigo: apenas array de bebidas — migrar para formato unificado
+          availableDrinks = data;
+          needsMigration = true;
+        } else if (data.record && Array.isArray(data.record)) {
+          availableDrinks = data.record;
+          needsMigration = true;
+        } else {
+          // Formato novo unificado
+          if (Array.isArray(data.drinks)) availableDrinks = data.drinks;
+          if (data.burgers) {
+            burgerState = { ...defaultBurgerState(), ...data.burgers };
+            try { localStorage.setItem(BURGER_MENU_KEY, JSON.stringify(burgerState)); } catch(e){}
+          }
+          if (data.adicionais) {
+            adicionaisOwnerConfig = data.adicionais;
+            try { localStorage.setItem(ADICIONAIS_OWNER_KEY, JSON.stringify(adicionaisOwnerConfig)); } catch(e){}
+          }
+        }
+      } else {
+        availableDrinks = [];
+      }
+
+      // Sempre atualiza menuItems após carregar estado
+      refreshMenuItems();
+
+      // Migração automática: se dados antigos, salvar no novo formato p/ todos verem
+      if (needsMigration && USE_CLOUD) {
+        console.log('[CB] Migrando dados para formato unificado...');
+        saveCloudData();
+      }
     }
 
-    async function saveDrinks(drinks) {
-      const json = JSON.stringify(drinks);
+    async function saveCloudData(drinksOverride) {
+      if (drinksOverride) availableDrinks = drinksOverride;
+      
+      const payload = {
+        drinks: availableDrinks,
+        burgers: burgerState,
+        adicionais: adicionaisOwnerConfig
+      };
+      const json = JSON.stringify(payload);
+      
       if (USE_CLOUD) {
         try {
           const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -2852,11 +2910,7 @@
             },
             body: json
           });
-          if (!res.ok) {
-            const body = await res.text().catch(() => '');
-            console.error(`[CB] saveDrinks HTTP ${res.status}:`, body);
-            throw new Error(`HTTP ${res.status}: ${body}`);
-          }
+          if (!res.ok) throw new Error('Cloud save failed');
           try { localStorage.setItem(STORAGE_KEY, json); } catch (_) { }
           return true;
         } catch (e) {
@@ -2867,18 +2921,15 @@
       try {
         localStorage.setItem(STORAGE_KEY, json);
         return true;
-      } catch (e) {
-        console.error('[CB] localStorage save falhou:', e);
-        return false;
-      }
+      } catch (e) { return false; }
     }
 
     // ============================================================
     // INIT
     // ============================================================
     window.addEventListener('load', async () => {
-      availableDrinks = await loadDrinks();
       adicionaisOwnerConfig = loadAdicionaisOwnerConfig();
+      await loadCloudData(); // carrega bebidas + estado dos lanches da nuvem
 
       // Carregar dados salvos do cliente (para não precisar digitar novamente)
       try {
@@ -2901,20 +2952,27 @@
         });
       }
 
+      // Renderizar DEPOIS que o cloud load terminou (burgerState já atualizado)
+      renderBurgers();
+      updateCartUI();
+
       setTimeout(() => {
         const loader = document.getElementById('loader');
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
         document.getElementById('appContent').style.display = 'block';
       }, 650);
-      renderBurgers();
-      updateCartUI();
     });
 
-    // Reload drinks from storage when tab regains focus (e.g. owner published in another tab)
+    // Reload state from storage when tab regains focus
     document.addEventListener('visibilitychange', async () => {
       if (!document.hidden) {
-        availableDrinks = await loadDrinks();
+        await loadCloudData();
+        refreshMenuItems();
+        if (currentStep === 1) renderBurgers();
+        if (currentStep === 2) renderAdicionaisPorBurger();
+        if (currentStep === 3) renderDrinks();
+        updateCartUI();
       }
     });
 
@@ -2934,8 +2992,8 @@
         let badgeHtml = item.special
           ? '<span class="card-badge card-badge--special">Especial</span>'
           : '<span class="card-badge">Clássico</span>';
-        if (soldOut && qty === 0) badgeHtml = '<span class="card-badge card-badge--sold">Esgotado</span>';
-        else if (!item.active) badgeHtml = '<span class="card-badge card-badge--sold">Pausado</span>';
+        if (!item.active && qty === 0) badgeHtml = '<span class="card-badge card-badge--sold">Pausado</span>';
+        else if (item.stock <= 0 && qty === 0) badgeHtml = '<span class="card-badge card-badge--sold">Esgotado</span>';
 
         let stockHtml = '';
         if (item.special && item.active && item.stock > 0) {
@@ -3117,9 +3175,20 @@
     // WIZARD
     // ============================================================
     let selectedPayment = null;
-    document.querySelectorAll('.pay-card').forEach(card => {
+    let selectedDelivery = 'Entrega';
+    
+    document.querySelectorAll('.delivery-type-card').forEach(card => {
       card.addEventListener('click', () => {
-        document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.delivery-type-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedDelivery = card.dataset.delivery;
+        document.getElementById('addressFields').style.display = selectedDelivery === 'Entrega' ? 'block' : 'none';
+      });
+    });
+
+    document.querySelectorAll('.pay-card:not(.delivery-type-card)').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.pay-card:not(.delivery-type-card)').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         selectedPayment = card.dataset.pay;
         document.getElementById('payError').style.display = 'none';
@@ -3415,12 +3484,13 @@
     <div class="review-card"><div class="review-section-title">🥤 Bebidas</div>${dHtml}</div>
     <div class="review-card"><div class="review-section-title">💳 Pagamento</div>${payHtml}</div>
     <div class="review-card">
-      <div class="review-section-title">📋 Entrega</div>
-      <div class="review-item"><span class="review-item-key">Entrega</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>
+      <div class="review-section-title">📋 Recebimento</div>
+      <div class="review-item"><span class="review-item-key">Tipo</span><span class="review-item-val" style="color:var(--accent);font-weight:800">${selectedDelivery.toUpperCase()}</span></div>
+      ${selectedDelivery === 'Entrega' ? `<div class="review-item"><span class="review-item-key">Taxa</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>` : ''}
       <div class="review-item"><span class="review-item-key">Nome</span><span class="review-item-val">${nome}</span></div>
       <div class="review-item"><span class="review-item-key">WhatsApp</span><span class="review-item-val">${phone}</span></div>
-      <div class="review-item"><span class="review-item-key">Endereço</span><span class="review-item-val">${end}</span></div>
-      ${ref ? `<div class="review-item"><span class="review-item-key">Referência</span><span class="review-item-val">${ref}</span></div>` : ''}
+      ${selectedDelivery === 'Entrega' ? `<div class="review-item"><span class="review-item-key">Endereço</span><span class="review-item-val">${end}</span></div>` : ''}
+      ${(selectedDelivery === 'Entrega' && ref) ? `<div class="review-item"><span class="review-item-key">Referência</span><span class="review-item-val">${ref}</span></div>` : ''}
       ${obs ? `<div class="review-item"><span class="review-item-key">Observação</span><span class="review-item-val">${obs}</span></div>` : ''}
     </div>`;
 
@@ -3441,7 +3511,17 @@
         document.getElementById('emptyCartError').style.display = 'none'; return true;
       }
       if (n === 4) {
-        const ok = document.getElementById('clientName').value.trim() && document.getElementById('clientPhone').value.trim() && document.getElementById('clientAddress').value.trim();
+        let isNameOk = !!document.getElementById('clientName').value.trim();
+        let isPhoneOk = !!document.getElementById('clientPhone').value.trim();
+        let ok = false;
+        
+        if (selectedDelivery === 'Entrega') {
+          let isAddrOk = !!document.getElementById('clientAddress').value.trim();
+          ok = isNameOk && isPhoneOk && isAddrOk;
+        } else {
+          ok = isNameOk && isPhoneOk;
+        }
+        
         document.getElementById('dataError').style.display = ok ? 'none' : 'flex';
         return !!ok;
       }
@@ -3493,7 +3573,8 @@
       const nome = document.getElementById('clientName').value.trim();
       const phone = document.getElementById('clientPhone').value.trim();
       const end = document.getElementById('clientAddress').value.trim();
-      if (!nome || !phone || !end) { alert("Preencha nome, telefone e endereço."); showStage(4); return; }
+      if (selectedDelivery === 'Entrega' && (!nome || !phone || !end)) { alert("Preencha nome, telefone e endereço."); showStage(4); return; }
+      if (selectedDelivery === 'Retirada' && (!nome || !phone)) { alert("Preencha nome e telefone."); showStage(4); return; }
 
       const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
       const data = new Date().toLocaleDateString('pt-BR');
@@ -3552,9 +3633,12 @@
 *Horário:* ${hora} | ${data}
 *Cliente:* ${nome}
 *WhatsApp:* ${phone}
-*Endereço:* ${end}`;
-      if (ref) msg += `\n*Referência:* ${ref}`;
-      msg += `\n*Entrega:* GRÁTIS`;
+*Recebimento:* ${selectedDelivery.toUpperCase()}`;
+      if (selectedDelivery === 'Entrega') {
+        msg += `\n*Endereço:* ${end}`;
+        if (ref) msg += `\n*Referência:* ${ref}`;
+        msg += `\n*Taxa de Entrega:* GRÁTIS`;
+      }
       msg +=
         `
 ━━━━━━━━━━━━━━━━━━━━━━━
@@ -3594,7 +3678,7 @@ _Pedido enviado via Central Burger App_ ✅`;
         const d = availableDrinks.find(x => x.id === id);
         if (d) d.stock = Math.max(0, d.stock - qty);
       });
-      saveDrinks(availableDrinks);
+      saveCloudData();
       selectedDrinks = {};
       adicionaisState = {};
       cart = [];
@@ -3862,7 +3946,7 @@ _Pedido enviado via Central Burger App_ ✅`;
       const btn = document.getElementById('publishBtn');
       btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Salvando...';
       btn.disabled = true;
-      const ok = await saveDrinks(ownerDrafts);
+      const ok = await saveCloudData(ownerDrafts);
       btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Publicar cardápio de bebidas';
       btn.disabled = false;
       if (ok) {
