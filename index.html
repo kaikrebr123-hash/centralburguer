@@ -1,4 +1,5 @@
-v2<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -628,6 +629,7 @@ v2<!DOCTYPE html>
 
     .card-img {
       width: 130px;
+      min-width: 130px;
       flex-shrink: 0;
       background: var(--surface2);
       position: relative;
@@ -636,9 +638,12 @@ v2<!DOCTYPE html>
     }
 
     .card-img img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center center;
       display: block;
       transition: transform .45s cubic-bezier(.25, .46, .45, .94);
     }
@@ -2284,6 +2289,7 @@ v2<!DOCTYPE html>
 
       .card-img {
         width: 150px;
+        min-width: 150px;
       }
 
       .card-top {
@@ -3005,7 +3011,7 @@ v2<!DOCTYPE html>
         card.innerHTML = `
       <div class="card-top">
         <div class="card-img">
-          <img src="${imgUrl}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;display:block;object-position:${item.imgPos || 'center'};">
+          <img src="${imgUrl}" alt="${item.name}" loading="lazy">
           ${badgeHtml}
         </div>
         <div class="card-info">
