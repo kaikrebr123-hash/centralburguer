@@ -1,0 +1,3885 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Central Burger · Hamburgueria Artesanal</title>
+  <link rel="icon" type="image/jpeg" href="Logo%20correta.jpeg?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #151515;
+      --surface2: #1f1f1f;
+      --border: rgba(255, 255, 255, 0.1);
+      --border2: rgba(255, 255, 255, 0.18);
+      --text: #f2f2f2;
+      --muted: #b8b8b8;
+      --dim: #8f8f8f;
+      /* Destaques: ouro (principal) + verde WhatsApp (só fluxo Zap) */
+      --accent: #e8c547;
+      --accent-dk: #c9a832;
+      --accent-soft: rgba(232, 197, 71, 0.12);
+      --accent-glow: rgba(232, 197, 71, 0.28);
+      --wa: #25d366;
+      --wa-dk: #1da851;
+      --wa-soft: rgba(37, 211, 102, 0.1);
+      --red: #e85d5d;
+      --green: #25d366;
+      --radius-sm: 14px;
+      --radius: 22px;
+      --radius-lg: 32px;
+      --sans: 'DM Sans', sans-serif;
+      --display: 'Barlow Condensed', sans-serif;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: var(--sans);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100dvh;
+    }
+
+
+    /* ===== LOADER ===== */
+    .loader-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity .28s, visibility .28s;
+      gap: 1.4rem;
+    }
+
+    .loader-logo {
+      width: 76px;
+      animation: pulse-logo .9s ease-in-out infinite alternate;
+    }
+
+    .loader-logo img {
+      width: 100%;
+      display: block;
+    }
+
+    @keyframes pulse-logo {
+      from {
+        transform: scale(.93);
+        opacity: .7;
+      }
+
+      to {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+
+    .loader-brand {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+    }
+
+    .loader-sub {
+      font-size: .6rem;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .loader-bar {
+      width: 110px;
+      height: 2px;
+      background: var(--surface2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loader-bar::after {
+      content: '';
+      display: block;
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, var(--accent-dk), var(--accent));
+      border-radius: 2px;
+      animation: loader-slide .95s ease-in-out infinite;
+    }
+
+    @keyframes loader-slide {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(350%);
+      }
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 8, 8, .92);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      border: 1.5px solid rgba(255, 255, 255, .15);
+    }
+
+    .logo-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .brand-name {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      font-size: .58rem;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      display: block;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+
+    .cart-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 40px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .cart-btn:active {
+      background: var(--surface);
+    }
+
+    .cart-btn i {
+      font-size: .9rem;
+      color: var(--text);
+    }
+
+    .cart-btn-label {
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .cart-count {
+      background: var(--accent);
+      color: #000;
+      font-size: .65rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 2px 7px;
+      min-width: 20px;
+      text-align: center;
+      font-family: var(--display);
+      transition: transform .15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: #080808;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      padding: 36px 20px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(232, 197, 71, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 255, 255, .035) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .2), transparent);
+    }
+
+    .hero-logo {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #000;
+      border: 2px solid rgba(255, 255, 255, .1);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, .8), 0 0 0 6px rgba(255, 255, 255, .03);
+    }
+
+    .hero-logo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .hero-title {
+      font-family: var(--display);
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: .92;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: rgba(232, 197, 71, .55);
+      font-size: 60%;
+      display: block;
+      margin-top: 8px;
+      letter-spacing: 3px;
+      font-weight: 700;
+    }
+
+    .hero-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 290px;
+      margin: 0 auto 16px;
+    }
+
+    .hero-chips {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .12);
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-size: .7rem;
+      color: rgba(255, 255, 255, .65);
+      font-weight: 500;
+    }
+
+    .hero-chip--free {
+      background: var(--accent-soft);
+      border: 1px solid rgba(232, 197, 71, 0.45);
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: .5px;
+      box-shadow: 0 0 0 1px rgba(232, 197, 71, 0.12);
+    }
+
+    .entrega-gratis-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(232, 197, 71, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .entrega-gratis-banner i {
+      color: var(--accent);
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    /* ===== APP BODY ===== */
+    .app-body {
+      padding: 0 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== WIZARD ===== */
+    .wizard-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 6px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .wizard-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .step-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 4px;
+      border-radius: var(--radius-sm);
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--dim);
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .step-item .step-number {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .62rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: all .25s;
+    }
+
+    .step-label {
+      display: none;
+    }
+
+    .step-item.active .step-label {
+      display: inline;
+    }
+
+    .step-item.active {
+      background: var(--text);
+      color: #000;
+    }
+
+    .step-item.active .step-number {
+      background: rgba(0, 0, 0, .15);
+      color: #000;
+    }
+
+    .step-item.completed {
+      color: var(--accent);
+    }
+
+    .step-item.completed .step-number {
+      background: rgba(255, 255, 255, .12);
+      color: var(--accent);
+    }
+
+    @media(min-width:400px) {
+      .step-label {
+        display: inline;
+      }
+
+      .step-item {
+        font-size: .72rem;
+      }
+    }
+
+    /* ===== STAGE PANELS ===== */
+    .stage-panel {
+      margin-bottom: 140px; /* Mais espaço para o cta-bar celular n cobrir os ultimos itens */
+      animation: fadeInSlide .35s ease both;
+    }
+
+    @keyframes fadeInSlide {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stage-title {
+      font-family: var(--display);
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: .5px;
+      color: var(--text);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stage-title-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(232, 197, 71, 0.28);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ===== BURGER CARDS ===== */
+    .burgers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .burger-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      animation: fade-up .35s ease both;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, .35);
+      cursor: pointer;
+    }
+
+    .burger-card:active {
+      transform: scale(0.98);
+    }
+
+    .burger-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 36px rgba(0, 0, 0, .55);
+      border-color: rgba(232, 197, 71, .22);
+    }
+
+    .burger-card:nth-child(1) {
+      animation-delay: .05s
+    }
+
+    .burger-card:nth-child(2) {
+      animation-delay: .15s
+    }
+
+    .burger-card:nth-child(3) {
+      animation-delay: .25s
+    }
+
+    .burger-card.in-cart {
+      border-color: rgba(232, 197, 71, .42);
+      box-shadow: 0 4px 28px var(--accent-glow);
+    }
+
+    .burger-card--soldout {
+      opacity: .65;
+      filter: grayscale(0.25);
+    }
+
+    .burger-card--soldout .qty-btn.incr {
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    .burger-card--special {
+      border-color: rgba(232, 197, 71, .28);
+    }
+
+    .card-badge--special {
+      background: linear-gradient(135deg, #2a2a2a, #111);
+      color: var(--accent);
+      border: 1px solid rgba(232, 197, 71, .45);
+    }
+
+    .card-badge--sold {
+      background: #2a2a2a;
+      color: #888;
+      border: 1px solid var(--border);
+    }
+
+    .card-stock-line {
+      font-size: .62rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: .2px;
+    }
+
+    .card-stock-line.is-low {
+      color: var(--accent);
+      animation: stock-pulse 1.8s ease-in-out infinite;
+    }
+
+    .card-stock-line i {
+      font-size: .65rem;
+    }
+
+    @keyframes stock-pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .55;
+      }
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .card-top {
+      display: flex;
+      min-height: 140px;
+    }
+
+    .card-img {
+      width: 130px;
+      flex-shrink: 0;
+      background: var(--surface2);
+      position: relative;
+      overflow: hidden;
+      align-self: stretch;
+    }
+
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .45s cubic-bezier(.25, .46, .45, .94);
+    }
+
+    .burger-card:hover .card-img img {
+      transform: scale(1.08);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--accent);
+      color: #000;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .58rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 12px rgba(232, 197, 71, .35);
+    }
+
+    .card-info {
+      padding: 14px 14px 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-name {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: .8px;
+      line-height: 1;
+    }
+
+    .card-short {
+      font-size: .73rem;
+      color: #aaa;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .card-price {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-top: auto;
+    }
+
+    .card-price small {
+      font-family: var(--sans);
+      font-size: .65rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .card-bottom {
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-desc-full {
+      font-size: .68rem;
+      color: var(--muted);
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      background: var(--surface2);
+      border-radius: 40px;
+      border: 1px solid var(--border2);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .qty-btn {
+      background: transparent;
+      border: none;
+      width: 38px;
+      height: 38px;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+    }
+
+    .qty-btn:active {
+      background: rgba(255, 255, 255, .15);
+    }
+
+    .qty-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .qty-number {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 800;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .qty-number.has-qty {
+      color: var(--accent);
+    }
+
+    /* ===== FORMS ===== */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: .72rem;
+      font-weight: 600;
+      color: #aaa;
+      letter-spacing: .5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    .required-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .optional-tag {
+      font-size: .6rem;
+      color: var(--dim);
+      background: var(--surface2);
+      padding: 1px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-weight: 400;
+      letter-spacing: .5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: .92rem;
+      font-family: var(--sans);
+      transition: border-color .2s, background .2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--dim);
+      font-size: .85rem;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, .03);
+      outline: none;
+    }
+
+    .form-group textarea {
+      resize: none;
+      line-height: 1.6;
+    }
+
+    /* ===== PAGAMENTO ===== */
+    .pay-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pay-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+
+    .pay-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .pay-card.selected {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .pay-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text);
+      flex-shrink: 0;
+      transition: color .2s, background .2s;
+    }
+
+    .pay-card.selected .pay-icon {
+      color: #000;
+      background: var(--accent);
+    }
+
+    .pay-info {
+      flex: 1;
+    }
+
+    .pay-name {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .pay-desc {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ===== DRINK STEP CLIENTE ===== */
+    .drinks-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: .85rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drinks-loading i {
+      font-size: 1.4rem;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .drinks-empty {
+      background: var(--surface);
+      border: 1px dashed var(--border2);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .drinks-empty i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+      opacity: .4;
+    }
+
+    .drinks-empty p {
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .drink-none-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 10px;
+    }
+
+    .drink-none-btn.selected {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .drink-none-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .drink-none-label {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .drink-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .drink-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .2s;
+      animation: fade-up .25s ease both;
+    }
+
+    .drink-card.selected {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .drink-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .drink-card-emoji {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .drink-card-info {
+      flex: 1;
+    }
+
+    .drink-card-name {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .drink-card-stock {
+      font-size: .65rem;
+      color: var(--muted);
+    }
+
+    .drink-card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .drink-card-price {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .drink-card-price.free {
+      font-family: var(--sans);
+      font-size: .72rem;
+      font-weight: 500;
+      color: var(--dim);
+    }
+
+    .drink-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: .65rem;
+    }
+
+    .drink-card.selected .drink-check {
+      display: flex;
+    }
+
+    .drink-qty-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+    }
+
+    .drink-qty-label {
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: .2px;
+    }
+
+    .drink-qty-ctrl {
+      display: flex;
+      align-items: center;
+      background: var(--surface2);
+      border-radius: 40px;
+      border: 1px solid var(--border2);
+      overflow: hidden;
+    }
+
+    .drink-qty-btn {
+      background: transparent;
+      border: none;
+      width: 34px;
+      height: 34px;
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drink-qty-btn:active {
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .drink-qty-num {
+      font-family: var(--display);
+      font-size: .95rem;
+      font-weight: 800;
+      min-width: 26px;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    /* ===== REVIEW ===== */
+    .review-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .review-section-title {
+      background: var(--surface2);
+      padding: 10px 16px;
+      font-size: .65rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .review-item:last-child {
+      border-bottom: none;
+    }
+
+    .review-item-key {
+      font-size: .72rem;
+      color: var(--muted);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .review-item-val {
+      font-size: .82rem;
+      color: var(--text);
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .review-total-box {
+      background: var(--surface);
+      border: 1px solid rgba(232, 197, 71, 0.28);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .review-total-label {
+      font-size: .75rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .review-total-val {
+      font-family: var(--display);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    /* ===== ERROR ===== */
+    .error-msg {
+      background: rgba(232, 90, 90, .08);
+      border: 1px solid rgba(232, 90, 90, .22);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: .78rem;
+      color: #e8a8a8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* ===== CTA BAR ===== */
+    .cta-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      padding: 12px 14px calc(12px + var(--safe-bottom));
+      background: linear-gradient(to top, rgba(8, 8, 8, 1) 60%, rgba(8, 8, 8, 0));
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .btn-back {
+      flex: 0 0 auto;
+      min-width: 96px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--text);
+      font-family: var(--display);
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .btn-back:active {
+      transform: scale(.97);
+      background: var(--surface);
+    }
+
+    .btn-back[hidden] {
+      display: none !important;
+    }
+
+    .cta-row .btn-next {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .btn-next {
+      width: 100%;
+      background: linear-gradient(180deg, #f0d060 0%, var(--accent) 55%, var(--accent-dk) 100%);
+      border: none;
+      color: #0a0a0a;
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all .2s;
+      box-shadow: 0 4px 22px var(--accent-glow);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .btn-next:active {
+      transform: scale(.98);
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dk) 100%);
+    }
+
+    .btn-next.btn-next--whatsapp {
+      background: linear-gradient(180deg, #3fe77a 0%, var(--wa) 50%, var(--wa-dk) 100%);
+      color: #04140a;
+      box-shadow: 0 4px 26px rgba(37, 211, 102, 0.38);
+    }
+
+    .btn-next.btn-next--whatsapp:active {
+      background: linear-gradient(180deg, var(--wa) 0%, var(--wa-dk) 100%);
+    }
+
+    .btn-next-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+      text-align: left;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .btn-next-line {
+      font-size: 1.02rem;
+      line-height: 1.2;
+      letter-spacing: .4px;
+    }
+
+    .btn-next-hint {
+      font-family: var(--sans);
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .25px;
+      opacity: .92;
+      line-height: 1.2;
+      max-width: 100%;
+    }
+
+    .btn-next #nextButtonIcon {
+      flex-shrink: 0;
+      font-size: 1.15rem;
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .btn-next:hover #nextButtonIcon {
+      transform: translateX(3px);
+    }
+
+    .btn-next--need-cart:hover #nextButtonIcon,
+    .btn-next--extras-nudge:hover #nextButtonIcon {
+      transform: scale(1.12);
+    }
+
+    .btn-next--whatsapp:hover #nextButtonIcon {
+      transform: scale(1.08);
+    }
+
+    .btn-next--need-cart {
+      animation: btn-cta-pulse 2.1s ease-in-out infinite;
+    }
+
+    .btn-next--extras-nudge {
+      animation: btn-cta-wiggle 2.8s ease-in-out infinite;
+    }
+
+    .btn-next--extras-ok #nextButtonIcon {
+      color: #0a0a0a;
+    }
+
+    @keyframes btn-cta-pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 4px 22px var(--accent-glow);
+      }
+
+      50% {
+        box-shadow: 0 6px 32px rgba(232, 197, 71, 0.55), 0 0 0 1px rgba(232, 197, 71, 0.35);
+        filter: brightness(1.03);
+      }
+    }
+
+    @keyframes btn-cta-wiggle {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-2px);
+      }
+
+      55% {
+        transform: translateY(0);
+      }
+
+      70% {
+        transform: translateY(-1px);
+      }
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 28px 0 16px;
+      border-top: 1px solid var(--border);
+      font-size: .7rem;
+      color: var(--dim);
+      margin: 0 14px;
+    }
+
+    footer strong {
+      color: var(--accent);
+    }
+
+    /* ===== ADICIONAIS ===== */
+    .adicionais-section {
+      margin-top: 28px;
+    }
+
+    .adicionais-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .adicionais-header .stage-title {
+      margin-bottom: 0;
+    }
+
+    .adicionais-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .adicional-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all .2s;
+      opacity: .5;
+      animation: fade-up .25s ease both;
+    }
+
+    .adicional-card.active {
+      border-color: rgba(255, 255, 255, .25);
+      opacity: 1;
+    }
+
+    .adicional-card.active.toggled-on {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, .04);
+      opacity: 1;
+    }
+
+    .adicional-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .adicional-emoji {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .adicional-name {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .adicional-price {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .adicional-toggle {
+      width: 52px;
+      height: 28px;
+      border-radius: 30px;
+      position: relative;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .adicional-toggle::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--dim);
+      transition: all .25s;
+    }
+
+    .adicional-toggle.on {
+      background: rgba(255, 255, 255, .2);
+      border-color: rgba(255, 255, 255, .5);
+    }
+
+    .adicional-toggle.on::after {
+      background: var(--accent);
+      transform: translateX(24px);
+    }
+
+    .adicional-burger-block {
+      margin-bottom: 22px;
+    }
+
+    .adicional-burger-header {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+      color: var(--accent);
+      padding: 8px 0;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, .2);
+    }
+
+    .adicional-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stage-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* ===== AVISO WHATSAPP ===== */
+    .wa-notice {
+      background: linear-gradient(145deg, var(--wa-soft) 0%, rgba(37, 211, 102, .04) 100%);
+      border: 1px solid rgba(37, 211, 102, .32);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .wa-notice-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(37, 211, 102, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      color: var(--wa);
+    }
+
+    .wa-notice-text {
+      flex: 1;
+    }
+
+    .wa-notice-title {
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .wa-notice-desc {
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .wa-notice-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(37, 211, 102, .18);
+      border: 1px solid rgba(37, 211, 102, .4);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .65rem;
+      color: #b8f5d0;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    /* ============================================================
+       PAINEL DO DONO
+    ============================================================ */
+    .owner-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+    }
+
+    .owner-overlay.open {
+      display: flex;
+      animation: panel-in .22s ease;
+    }
+
+    @keyframes panel-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ---- PIN ---- */
+    .pin-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      gap: 8px;
+      position: relative;
+    }
+
+    .pin-icon {
+      font-size: 2.4rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .pin-title {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .pin-sub {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .pin-dots {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0 24px;
+    }
+
+    .pin-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid var(--border2);
+      transition: all .2s;
+    }
+
+    .pin-dot.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .pin-dot.error {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .pin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .pin-key {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: background .15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .pin-key:active {
+      background: var(--surface2);
+    }
+
+    .pin-key.del {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .pin-key.empty {
+      background: transparent;
+      border: none;
+      pointer-events: none;
+    }
+
+    .pin-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ---- Painel principal ---- */
+    .owner-main {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .owner-main.visible {
+      display: flex;
+    }
+
+    .owner-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .owner-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .owner-header-icon {
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    .owner-header-title {
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    .owner-header-sub {
+      font-size: .6rem;
+      color: var(--muted);
+      display: block;
+    }
+
+    .owner-close-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .owner-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* ===== OWNER TABS ===== */
+    .owner-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px 16px 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .owner-tab {
+      flex: 1;
+      padding: 9px 8px;
+      border-radius: 10px 10px 0 0;
+      font-family: var(--display);
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .owner-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .owner-tab-panel {
+      display: none;
+    }
+
+    .owner-tab-panel.active {
+      display: block;
+    }
+
+    /* ===== ACOMP OWNER LIST ===== */
+    .owner-acomp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .owner-acomp-item {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: opacity .2s, border-color .2s;
+    }
+
+    .owner-acomp-item.inactive {
+      opacity: .45;
+    }
+
+    .owner-acomp-item.active-on {
+      border-color: rgba(255, 255, 255, .4);
+    }
+
+    .owner-acomp-emoji {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .owner-acomp-info {
+      flex: 1;
+    }
+
+    .owner-acomp-name {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .owner-acomp-meta {
+      font-size: .68rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Lista de bebidas do dono */
+    .owner-drinks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .owner-empty {
+      text-align: center;
+      padding: 28px 20px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .owner-empty i {
+      font-size: 2.4rem;
+      opacity: .3;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .owner-empty p {
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .owner-drink-item {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: opacity .2s;
+    }
+
+    .owner-drink-item.inactive {
+      opacity: .5;
+    }
+
+    .owner-drink-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+    }
+
+    .owner-drink-emoji {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .owner-drink-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .owner-drink-name {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .owner-drink-meta {
+      font-size: .68rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .owner-drink-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .toggle-btn {
+      width: 46px;
+      height: 26px;
+      border-radius: 30px;
+      position: relative;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-btn::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--dim);
+      transition: all .25s;
+    }
+
+    .toggle-btn.on {
+      background: rgba(255, 255, 255, .14);
+      border-color: rgba(255, 255, 255, .35);
+    }
+
+    .toggle-btn.on::after {
+      background: var(--green);
+      transform: translateX(20px);
+    }
+
+    .delete-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .2);
+      color: var(--red);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+    }
+
+    .owner-drink-stock-row {
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .owner-drink-stock-label {
+      font-size: .68rem;
+      color: var(--muted);
+    }
+
+    .owner-stock-ctrl {
+      display: flex;
+      align-items: center;
+      background: var(--surface2);
+      border-radius: 40px;
+      border: 1px solid var(--border2);
+      overflow: hidden;
+    }
+
+    .owner-stock-btn {
+      background: transparent;
+      border: none;
+      width: 34px;
+      height: 34px;
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .owner-stock-btn:active {
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .owner-stock-num {
+      font-family: var(--display);
+      font-size: .95rem;
+      font-weight: 800;
+      min-width: 30px;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    /* Adicionar nova bebida */
+    .add-card {
+      background: var(--surface);
+      border: 1px dashed var(--border2);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .add-card-title {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .emoji-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .emoji-opt {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .emoji-opt.selected {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .add-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 0;
+    }
+
+    .add-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .btn-add {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .2s;
+      margin-top: 12px;
+    }
+
+    .btn-add i {
+      color: var(--accent);
+    }
+
+    .btn-add:active {
+      background: var(--surface);
+    }
+
+    .owner-footer {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px calc(12px + var(--safe-bottom));
+      flex-shrink: 0;
+    }
+
+    .btn-publish {
+      width: 100%;
+      background: var(--accent);
+      border: none;
+      color: #000;
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 15px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-publish:active {
+      background: var(--accent-dk);
+    }
+
+    .btn-publish:disabled {
+      opacity: .6;
+      pointer-events: none;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--green);
+      color: #000;
+      font-size: .82rem;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 30px;
+      z-index: 400;
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== PIX OVERLAY ===== */
+    .pix-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .pix-overlay.open { display: flex; animation: fade-up .25s ease both; }
+    .pix-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); width: 100%; max-width: 340px;
+      padding: 24px 20px; position: relative; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .pix-modal-close {
+      position: absolute; top: 16px; right: 16px; background: var(--surface2);
+      border: 1px solid var(--border2); width: 34px; height: 34px;
+      border-radius: 50%; color: var(--text); display: flex;
+      align-items: center; justify-content: center; cursor: pointer;
+    }
+    .pix-icon-large { font-size: 3rem; color: var(--wa); margin-bottom: 12px; }
+    .pix-modal-title { font-family: var(--display); font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+    .pix-modal-desc { color: var(--muted); font-size: .95rem; margin-bottom: 20px; }
+    .pix-modal-desc strong { color: var(--accent); }
+    .pix-key-box {
+      background: rgba(37, 211, 102, 0.08); border: 1px dashed var(--wa);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+    }
+    .pix-key-label { font-size: .8rem; color: var(--text); font-weight: 700; margin-bottom: 8px; }
+    .pix-key-box input {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); font-family: var(--sans); font-weight: 800; font-size: 1.1rem;
+      padding: 10px; border-radius: 10px; text-align: center; outline: none; margin-bottom: 10px;
+    }
+    .btn-copy-modal {
+      background: var(--wa); color: #000; border: none; border-radius: 10px;
+      width: 100%; padding: 12px; font-weight: 800; font-family: var(--display);
+      font-size: 1.05rem; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: transform .2s;
+    }
+    .btn-copy-modal:active { transform: scale(.97); }
+    .pix-modal-footer { font-size: .75rem; color: var(--dim); line-height: 1.4; }
+    
+    /* ===== DESKTOP ===== */
+    @media(min-width:600px) {
+      .app-body {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .header-inner {
+        max-width: 760px;
+        margin: 0 auto;
+      }
+
+      .hero {
+        border-radius: var(--radius-lg);
+        margin: 14px;
+      }
+
+      .cta-bar {
+        max-width: 760px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        width: 100%;
+        padding: 12px;
+      }
+
+      .card-img {
+        width: 150px;
+      }
+
+      .card-top {
+        min-height: 150px;
+      }
+    }
+
+    @media(min-width:1100px) {
+
+      .app-body,
+      .header-inner,
+      .cta-bar {
+        max-width: 920px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOADER -->
+  <div class="loader-screen" id="loader">
+    <div class="loader-logo"><img src="Logo correta.jpeg" alt="Central Burger"></div>
+    <div class="loader-brand">CENTRAL BURGER</div>
+    <div class="loader-sub">hamburgueria artesanal</div>
+    <div class="loader-bar"></div>
+  </div>
+
+  <!-- PIX Overlay -->
+  <div class="pix-overlay" id="pixOverlayModal">
+    <div class="pix-modal">
+      <button class="pix-modal-close" id="pixModalClose"><i class="fas fa-times"></i></button>
+      <div class="pix-icon-large"><i class="fab fa-pix"></i></div>
+      <div class="pix-modal-title">Pagamento via Pix</div>
+      <div class="pix-modal-desc">Valor: <strong id="pixModalValue">R$ 0,00</strong></div>
+      
+      <div class="pix-key-box">
+         <div class="pix-key-label">Chave Pix (CNPJ)</div>
+         <input type="text" value="62742258000110" id="pixModalKey" readonly>
+         <button id="pixModalCopyBtn" class="btn-copy-modal"><i class="fas fa-copy" id="pixModalCopyIcon"></i> Copiar Chave</button>
+      </div>
+      
+      <div class="pix-modal-footer">
+        Falta pouco! Copie a chave e faça o pagamento no seu banco. (O motoboy também leva o QR Code)
+      </div>
+      <button class="btn-next btn-next--whatsapp" style="margin-top:16px; padding: 12px; width: 100%; border-radius:12px; font-size: 1.1rem; justify-content: center;" id="pixModalOkBtn">
+        Tudo Certo
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     PAINEL DO DONO
+============================================================ -->
+  <div class="owner-overlay" id="ownerOverlay">
+
+    <!-- Tela de PIN -->
+    <div id="pinScreen" class="pin-screen">
+      <button class="pin-close-btn" id="pinCloseBtn"><i class="fas fa-times"></i></button>
+      <div class="pin-icon"><i class="fas fa-lock"></i></div>
+      <div class="pin-title">Acesso do Dono</div>
+      <div class="pin-sub">Digite o PIN para continuar</div>
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+      </div>
+      <div class="pin-grid">
+        <button class="pin-key" data-k="1">1</button>
+        <button class="pin-key" data-k="2">2</button>
+        <button class="pin-key" data-k="3">3</button>
+        <button class="pin-key" data-k="4">4</button>
+        <button class="pin-key" data-k="5">5</button>
+        <button class="pin-key" data-k="6">6</button>
+        <button class="pin-key" data-k="7">7</button>
+        <button class="pin-key" data-k="8">8</button>
+        <button class="pin-key" data-k="9">9</button>
+        <div class="pin-key empty"></div>
+        <button class="pin-key" data-k="0">0</button>
+        <button class="pin-key del" id="pinDelBtn"><i class="fas fa-delete-left"></i></button>
+      </div>
+    </div>
+
+    <!-- Painel principal do dono -->
+    <div class="owner-main" id="ownerMain">
+      <div class="owner-header">
+        <div class="owner-header-left">
+          <i class="fas fa-store owner-header-icon"></i>
+          <div>
+            <div class="owner-header-title">Painel do Dono</div>
+            <span class="owner-header-sub" id="storageModeBadge">Gerencie o cardápio</span>
+          </div>
+        </div>
+        <button class="owner-close-btn" id="ownerCloseBtn"><i class="fas fa-times"></i></button>
+      </div>
+
+      <!-- TABS -->
+      <div class="owner-tabs">
+        <button class="owner-tab active" id="tabBebidas" onclick="switchOwnerTab('bebidas')">
+          <i class="fas fa-wine-glass"></i> Bebidas
+        </button>
+        <button class="owner-tab" id="tabLanches" onclick="switchOwnerTab('lanches')">
+          <i class="fas fa-burger"></i> Lanches
+        </button>
+        <button class="owner-tab" id="tabAcomp" onclick="switchOwnerTab('acomp')">
+          <i class="fas fa-layer-group"></i> Acompanhamentos
+        </button>
+      </div>
+
+      <div class="owner-body">
+
+        <!-- ABA BEBIDAS -->
+        <div class="owner-tab-panel active" id="panelBebidas">
+          <div id="ownerList" class="owner-drinks-list" style="margin-top:12px;"></div>
+          <div class="add-card">
+            <div class="add-card-title"><i class="fas fa-plus"></i> Adicionar bebida</div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label>Nome da bebida</label>
+              <input type="text" id="newName" placeholder="Ex: Coca-Cola Lata, Suco de Laranja...">
+            </div>
+            <div class="emoji-picker" id="emojiPicker">
+              <div class="emoji-opt selected" data-e="🥤">🥤</div>
+              <div class="emoji-opt" data-e="🍺">🍺</div>
+              <div class="emoji-opt" data-e="🍹">🍹</div>
+              <div class="emoji-opt" data-e="🧃">🧃</div>
+              <div class="emoji-opt" data-e="☕">☕</div>
+              <div class="emoji-opt" data-e="🫗">🫗</div>
+              <div class="emoji-opt" data-e="💧">💧</div>
+              <div class="emoji-opt" data-e="🧋">🧋</div>
+            </div>
+            <div class="add-row">
+              <div class="form-group">
+                <label>Preço R$ <span class="optional-tag">opcional</span></label>
+                <input type="number" id="newPrice" placeholder="0,00" min="0" step="0.50" inputmode="decimal">
+              </div>
+              <div class="form-group">
+                <label>Estoque un.</label>
+                <input type="number" id="newStock" placeholder="10" min="1" value="10" inputmode="numeric">
+              </div>
+            </div>
+            <button class="btn-add" id="addDrinkBtn"><i class="fas fa-plus"></i> Adicionar</button>
+          </div>
+        </div>
+
+        <!-- ABA LANCHES -->
+        <div class="owner-tab-panel" id="panelLanches">
+          <p style="font-size:.78rem;color:var(--muted);padding:14px 0 10px;line-height:1.55;">
+            <strong style="color:var(--text);">Especiais</strong> — ative/desative e ajuste o estoque enquanto durarem.
+            O cliente vê “últimas unidades” quando o número fica baixo.
+          </p>
+          <div class="owner-drinks-list" id="ownerBurgerList" style="margin-top:4px;"></div>
+        </div>
+
+        <!-- ABA ACOMPANHAMENTOS -->
+        <div class="owner-tab-panel" id="panelAcomp">
+          <p style="font-size:.78rem;color:var(--muted);padding:14px 0 10px;line-height:1.5;">
+            Ative ou desative os acompanhamentos disponíveis para os clientes.
+          </p>
+          <div class="owner-acomp-list" id="ownerAcompList"></div>
+        </div>
+
+      </div>
+
+      <div class="owner-footer">
+        <button class="btn-publish" id="publishBtn"><i class="fas fa-cloud-arrow-up"></i> Publicar cardápio de
+          bebidas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">✓ Cardápio publicado com sucesso!</div>
+
+  <!-- ============================================================
+     APP PRINCIPAL
+============================================================ -->
+  <div id="appContent" style="display:none;">
+
+    <div class="header">
+      <div class="header-inner">
+        <div class="logo-area">
+          <div class="logo-img" id="logoTap">
+            <img src="Logo correta.jpeg" alt="Central Burger">
+          </div>
+          <div>
+            <div class="brand-name">Central Burger</div>
+            <span class="brand-sub">naviraí · ms</span>
+          </div>
+        </div>
+        <div class="cart-btn" id="openCartSummary">
+          <i class="fas fa-bag-shopping"></i>
+          <span class="cart-btn-label">Carrinho</span>
+          <span class="cart-count" id="cartCountHeader">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-logo"><img src="Logo correta.jpeg" alt="Central Burger"></div>
+      <h1 class="hero-title">CENTRAL BURGER<em>hamburgueria artesanal</em></h1>
+      <p class="hero-desc"><strong>Entrega grátis</strong> — carne selecionada, pão artesanal e pedido pelo WhatsApp.
+        Simples assim.</p>
+      <div class="hero-chips">
+        <span class="hero-chip hero-chip--free"><i class="fas fa-truck-fast"></i> Entrega grátis</span>
+        <span class="hero-chip"><i class="fas fa-clock"></i> 19h – 23h</span>
+        <span class="hero-chip"><i class="fas fa-fire-flame-curved"></i> Feito na hora</span>
+      </div>
+    </div>
+
+    <div class="app-body">
+      <div class="wizard-bar" id="wizardSteps">
+        <div class="step-item" data-step="1"><span class="step-number">1</span><span class="step-label">Lanches</span>
+        </div>
+        <div class="step-item" data-step="2"><span class="step-number">2</span><span
+            class="step-label">Adicionais</span></div>
+        <div class="step-item" data-step="3"><span class="step-number">3</span><span class="step-label">Bebidas</span>
+        </div>
+        <div class="step-item" data-step="4"><span class="step-number">4</span><span class="step-label">Entrega
+            grátis</span></div>
+        <div class="step-item" data-step="5"><span class="step-number">5</span><span class="step-label">Finalizar</span>
+        </div>
+      </div>
+
+      <!-- STAGE 1 -->
+      <div id="stage1" class="stage-panel">
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-utensils"></i></span>Monte seu pedido
+        </div>
+        <div class="burgers-list" id="burgersList"></div>
+        <div id="emptyCartError" class="error-msg" style="display:none;">
+          <i class="fas fa-triangle-exclamation"></i> Escolha um lanche para continuar
+        </div>
+      </div>
+
+      <!-- STAGE ADICIONAIS (step 2) -->
+      <div id="stage-adicionais" class="stage-panel" style="display:none;">
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-plus-circle"></i></span>Adicionais
+        </div>
+        <p class="stage-desc">Quer adicionar algo mais? Marque opções extras abaixo para cada lanche. (Opcional)</p>
+        <div id="adicionaisContent"></div>
+      </div>
+
+      <!-- STAGE 3: BEBIDAS -->
+      <div id="stage3" class="stage-panel" style="display:none;">
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-wine-glass"></i></span>Quer uma bebida?
+        </div>
+        <div id="drinksContent">
+          <div class="drinks-loading"><i class="fas fa-circle-notch"></i><span>Carregando...</span></div>
+        </div>
+      </div>
+
+      <!-- STAGE 4: ENTREGA -->
+      <div id="stage-entrega" class="stage-panel" style="display:none;">
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-user"></i></span>Entrega</div>
+        <div class="entrega-gratis-banner" role="status">
+          <i class="fas fa-gift" aria-hidden="true"></i>
+          <span><strong>Entrega grátis:</strong> só precisamos do seu endereço certinho pra levar quentinho até você.</span>
+        </div>
+        <div class="form-group">
+          <label><span class="required-dot"></span> Nome completo</label>
+          <input type="text" id="clientName" placeholder="Ex: João Silva" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label><span class="required-dot"></span> WhatsApp / Telefone</label>
+          <input type="tel" id="clientPhone" placeholder="(XX) 9XXXX-XXXX" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label><span class="required-dot"></span> Endereço de entrega</label>
+          <input type="text" id="clientAddress" placeholder="Rua, número, bairro" autocomplete="street-address">
+        </div>
+        <div class="form-group">
+          <label>Ponto de referência <span class="optional-tag">opcional</span></label>
+          <input type="text" id="clientRef" placeholder="Perto do mercado...">
+        </div>
+        <div class="form-group">
+          <label>Observação <span class="optional-tag">opcional</span></label>
+          <input type="text" id="clientObs" placeholder="Sem cebola, ponto da carne...">
+        </div>
+        <div id="dataError" class="error-msg" style="display:none;">
+          <i class="fas fa-triangle-exclamation"></i> Preencha nome, telefone e endereço para continuar.
+        </div>
+      </div>
+
+      <!-- STAGE 5: FINALIZAR -->
+      <div id="stage-finalizar" class="stage-panel" style="display:none;">
+        <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-check"></i></span>Finalizar Pedido
+        </div>
+
+        <p class="stage-desc" style="margin-bottom:12px;font-weight:bold;color:var(--text);">1. Forma de Pagamento</p>
+        <p class="stage-desc" style="margin-top:-6px;">Como você gostaria de pagar na entrega?</p>
+        <div class="pay-grid">
+          <div class="pay-card" data-pay="Pix">
+            <div class="pay-icon"><i class="fab fa-pix"></i></div>
+            <div class="pay-info">
+              <div class="pay-name">Pix</div>
+              <div class="pay-desc">Rápido e prático</div>
+            </div>
+          </div>
+
+
+          <div class="pay-card" data-pay="Cartão">
+            <div class="pay-icon"><i class="fas fa-credit-card"></i></div>
+            <div class="pay-info">
+              <div class="pay-name">Cartão</div>
+              <div class="pay-desc">Crédito ou débito (levamos a máquina)</div>
+            </div>
+          </div>
+          <div class="pay-card" data-pay="Dinheiro">
+            <div class="pay-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="pay-info">
+              <div class="pay-name">Dinheiro</div>
+              <div class="pay-desc">Pague em espécie (Troco devolvido no Pix)</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="trocoSection" style="display:none; margin-top:16px;">
+          <div class="form-group" style="padding: 12px; border: 1px solid var(--accent); border-radius: 8px; background: var(--accent-soft);">
+            <label style="color: var(--text);">Precisa de troco para quanto?</label>
+            <input type="number" id="payTroco" placeholder="Ex: 50 ou deixe em branco se não precisar">
+            <span style="font-size: .7rem; color: var(--accent); display: block; margin-top: 6px;">
+               <i class="fas fa-info-circle"></i> O motoboy não leva cédulas. O saldo voltará pra você no Pix!
+            </span>
+          </div>
+        </div>
+
+        <div id="payError" class="error-msg" style="display:none; margin-bottom:16px;">
+          <i class="fas fa-triangle-exclamation"></i> Escolha uma forma de pagamento para continuar.
+        </div>
+
+        <hr style="border:0; border-top:1px solid var(--border); margin: 26px 0;">
+
+        <p class="stage-desc" style="margin-bottom:12px;font-weight:bold;color:var(--text);">2. Revise o pedido</p>
+        <div class="wa-notice">
+          <div class="wa-notice-icon"><i class="fab fa-whatsapp"></i></div>
+          <div class="wa-notice-text">
+            <div class="wa-notice-title">Você será direcionado ao WhatsApp</div>
+            <div class="wa-notice-desc">Seu pedido já estará formatado. <strong>Só apertar Enviar!</strong> Nada mais
+              para fazer.</div>
+            <span class="wa-notice-pill"><i class="fab fa-whatsapp"></i> 1 toque = pedido feito</span>
+          </div>
+        </div>
+        <div id="reviewContainer"></div>
+        <div id="reviewTotal"></div>
+      </div>
+
+    </div>
+    <footer><strong>Central Burger</strong> · Entrega grátis · Peça pelo WhatsApp · (67) 9859-3098</footer>
+  </div>
+
+  <div class="cta-bar">
+    <div class="cta-row">
+      <button type="button" class="btn-back" id="prevStepBtn" hidden>Voltar</button>
+      <button type="button" class="btn-next btn-next--need-cart" id="nextButton" aria-live="polite">
+        <span class="btn-next-col">
+          <span class="btn-next-line" id="nextButtonMain">Escolha um lanche para continuar</span>
+          <span class="btn-next-hint" id="nextButtonHint">Toque em + no card do lanche</span>
+        </span>
+        <i class="fas fa-burger" id="nextButtonIcon" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // CONFIG — altere o PIN e as chaves do JSONBin aqui
+    // ============================================================
+    const OWNER_PIN = "1234";
+    const STORAGE_KEY = "cb-drinks-v2"; // localStorage fallback key
+
+    // ============================================================
+    // ADICIONAIS FIXOS
+    // ============================================================
+    const ADICIONAIS_LIST = [
+      { id: 'add-queijo', emoji: '🧀', name: 'Hambúrguer c/ Mussarela', price: 7.00, active: true },
+      { id: 'add-bacon', emoji: '🥓', name: 'Bacon', price: 3.00, active: true },
+      { id: 'add-salada', emoji: '🥗', name: 'Salada', price: 2.00, active: true },
+      { id: 'add-cebroxa', emoji: '🧅', name: 'Cebola Roxa', price: 1.50, active: true },
+      { id: 'add-picles', emoji: '🥒', name: 'Picles', price: 1.50, active: true },
+      { id: 'add-cebcaraml', emoji: '✨', name: 'Cebola Caramelizada', price: 5.00, active: true },
+    ];
+    const ADICIONAIS_OWNER_KEY = 'cb-adicionais-v1';
+    let adicionaisState = {}; // { 'add-queijo': true/false, ... } — quais estão ligados pelo cliente
+    let adicionaisOwnerConfig = {}; // quais estão habilitados pelo dono
+
+    function loadAdicionaisOwnerConfig() {
+      try {
+        const v = localStorage.getItem(ADICIONAIS_OWNER_KEY);
+        if (v) return JSON.parse(v);
+      } catch (_) { }
+      // padrão: todos ativos
+      const cfg = {};
+      ADICIONAIS_LIST.forEach(a => cfg[a.id] = true);
+      return cfg;
+    }
+    function saveAdicionaisOwnerConfig(cfg) {
+      try { localStorage.setItem(ADICIONAIS_OWNER_KEY, JSON.stringify(cfg)); } catch (_) { }
+    }
+
+    // ── JSONBin.io ──────────────────────────────────────────────
+    // Master Key (have-mestre): $2a$10$/0kgtOPVQRCObMQgxKT4VuP6ff98.UHhn09JM78o59QI9x4CYWW26
+    // Chave de acesso X já configurada abaixo.
+    // Falta só: criar o Bin em jsonbin.io e colar o BIN ID abaixo.
+    const JSONBIN_BIN_ID = "69c7333ec3097a1dd56aaba0";
+    const JSONBIN_API_KEY = "$2a$10$g78bDb1Dnfya.H2RaE5F.ex/HEkGO/TkiGK5O11KmpByzlpB5IWpq"; // Chave de acesso X
+    const JSONBIN_MASTER_KEY = "$2a$10$/0kgtOPVQRCObMQgxKT4VuP6ff98.UHhn09JM78o59QI9x4CYWW26";  // Master Key
+    // ────────────────────────────────────────────────────────────
+
+    const USE_CLOUD = JSONBIN_BIN_ID !== "SEU_BIN_ID_AQUI" && JSONBIN_MASTER_KEY !== "SEU_MASTER_KEY_AQUI";
+
+    // ============================================================
+    // CARDÁPIO DE LANCHES
+    // ============================================================
+    const BURGER_MENU_KEY = 'cb-burger-menu-v1';
+
+    const BURGER_CATALOG = [
+      {
+        id: 1,
+        name: "Especial Churrasco",
+        price: 30,
+        special: true,
+        descShort: "Pão francês · 200g · mussarela · vinagrete · rúcula",
+        descFull: "Edição especial: pão francês na chapa, hambúrguer artesanal de 200g, mussarela derretida, vinagrete da casa e rúcula fresca — receita premium com cara de churrasco.",
+        imgSrc: "burguer churrasco.jpeg",
+        imgPos: "center center"
+      },
+      {
+        id: 2,
+        name: "Especial Caramelizado",
+        price: 30,
+        special: true,
+        descShort: "Pão artesanal · 200g · cebola caramelizada · mussarela",
+        descFull: "Edição especial: pão macio, hambúrguer de 200g, mussarela e cebola caramelizada no ponto — sabor marcante.",
+        imgSrc: "burger cebola caramelizada.jpeg",
+        imgPos: "center center"
+      },
+      {
+        id: 3,
+        name: "Tradicional",
+        price: 30,
+        special: false,
+        descShort: "Pão · 200g · mussarela · bacon · cebola roxa · picles · tomate · alface",
+        descFull: "Pão, hambúrguer de 200g, mussarela, bacon, cebola roxa, picles, tomate e alface americana.",
+        imgSrc: "burger tradicional.jpeg",
+        imgPos: "center center"
+      },
+      {
+        id: 4,
+        name: "Duplo",
+        price: 30,
+        special: false,
+        descShort: "Pão · dois hambúrgueres de 200g · mussarela dupla",
+        descFull: "Pão, dois hambúrgueres de 200g e mussarela dupla.",
+        imgSrc: "burguer duplo.jpeg",
+        imgPos: "center center"
+      },
+      {
+        id: 5,
+        name: "Simples",
+        price: 25,
+        special: false,
+        descShort: "Pão · 200g · mussarela",
+        descFull: "Pão, hambúrguer de 200g e mussarela derretida.",
+        imgSrc: "burger simples.jpeg",
+        imgPos: "center center"
+      }
+    ];
+
+    function defaultBurgerState() {
+      return {
+        '1': { active: true, stock: 20 },
+        '2': { active: true, stock: 20 },
+        '3': { active: true, stock: 999 },
+        '4': { active: true, stock: 999 },
+        '5': { active: true, stock: 999 }
+      };
+    }
+
+    function loadBurgerState() {
+      try {
+        const v = localStorage.getItem(BURGER_MENU_KEY);
+        if (v) return { ...defaultBurgerState(), ...JSON.parse(v) };
+      } catch (_) { }
+      return defaultBurgerState();
+    }
+
+    function saveBurgerState(st) {
+      try { localStorage.setItem(BURGER_MENU_KEY, JSON.stringify(st)); } catch (_) { }
+    }
+
+    let burgerState = loadBurgerState();
+
+    function getMenuItems() {
+      return BURGER_CATALOG.map(item => {
+        const st = burgerState[String(item.id)] || {};
+        const active = st.active !== false;
+        const stock = typeof st.stock === 'number' ? st.stock : (item.special ? 0 : 999);
+        return { ...item, active, stock };
+      });
+    }
+
+    let menuItems = getMenuItems();
+
+    function refreshMenuItems() {
+      menuItems = getMenuItems();
+    }
+
+
+    // ESTADO
+    // ============================================================
+    let cart = [];
+    let currentStep = 1;
+    let selectedDrinks = {};       // { id: quantidade }
+    let availableDrinks = [];       // bebidas publicadas pelo dono
+    let ownerDrafts = [];       // rascunho no painel do dono
+    let selectedEmoji = "🥤";
+
+    // ============================================================
+    // STORAGE — cloud (JSONBin) com fallback para localStorage
+    // ============================================================
+
+    async function loadDrinks() {
+      if (USE_CLOUD) {
+        try {
+          // Bin público: não precisa de chave para leitura
+          const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`);
+          if (res.ok) {
+            const data = await res.json();
+            const drinks = Array.isArray(data) ? data : (data.record || []);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch (_) { }
+            return drinks;
+          }
+          // se falhou sem auth, tenta com master key (bin ainda privado)
+          const res2 = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false`, {
+            headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+          });
+          if (res2.ok) {
+            const data = await res2.json();
+            const drinks = Array.isArray(data) ? data : (data.record || []);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(drinks)); } catch (_) { }
+            return drinks;
+          }
+          console.warn('[CB] loadDrinks HTTP', res2.status);
+        } catch (e) {
+          console.warn('[CB] Cloud load falhou, usando localStorage:', e);
+        }
+      }
+      try {
+        const val = localStorage.getItem(STORAGE_KEY);
+        if (val) return JSON.parse(val);
+      } catch (e) { }
+      return [];
+    }
+
+    async function saveDrinks(drinks) {
+      const json = JSON.stringify(drinks);
+      if (USE_CLOUD) {
+        try {
+          const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Master-Key': JSONBIN_MASTER_KEY,
+              'X-Bin-Versioning': 'false',
+              'X-Bin-Private': 'false'
+            },
+            body: json
+          });
+          if (!res.ok) {
+            const body = await res.text().catch(() => '');
+            console.error(`[CB] saveDrinks HTTP ${res.status}:`, body);
+            throw new Error(`HTTP ${res.status}: ${body}`);
+          }
+          try { localStorage.setItem(STORAGE_KEY, json); } catch (_) { }
+          return true;
+        } catch (e) {
+          console.error('[CB] Cloud save falhou:', e);
+          return false;
+        }
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY, json);
+        return true;
+      } catch (e) {
+        console.error('[CB] localStorage save falhou:', e);
+        return false;
+      }
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    window.addEventListener('load', async () => {
+      availableDrinks = await loadDrinks();
+      adicionaisOwnerConfig = loadAdicionaisOwnerConfig();
+
+      // Carregar dados salvos do cliente (para não precisar digitar novamente)
+      try {
+        const savedInfo = localStorage.getItem('cb-client-info-v1');
+        if (savedInfo) {
+          const info = JSON.parse(savedInfo);
+          if (info.name) document.getElementById('clientName').value = info.name;
+          if (info.phone) document.getElementById('clientPhone').value = info.phone;
+          if (info.address) document.getElementById('clientAddress').value = info.address;
+          if (info.ref) document.getElementById('clientRef').value = info.ref;
+        }
+      } catch (e) {}
+
+      // Máscara para o telefone (coloca () e - automático)
+      const phoneInput = document.getElementById('clientPhone');
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function (e) {
+          let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+          e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+      }
+
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+        document.getElementById('appContent').style.display = 'block';
+      }, 650);
+      renderBurgers();
+      updateCartUI();
+    });
+
+    // Reload drinks from storage when tab regains focus (e.g. owner published in another tab)
+    document.addEventListener('visibilitychange', async () => {
+      if (!document.hidden) {
+        availableDrinks = await loadDrinks();
+      }
+    });
+
+    // ============================================================
+    // BURGERS
+    // ============================================================
+    function renderBurgers() {
+      refreshMenuItems();
+      const el = document.getElementById('burgersList');
+      el.innerHTML = '';
+      menuItems.forEach((item) => {
+        const qty = (cart.find(c => c.id === item.id) || { quantity: 0 }).quantity;
+        const imgUrl = item.imgSrc || item.imgB64 || '';
+        const canAdd = item.active && qty < item.stock;
+        const soldOut = !item.active || item.stock <= 0;
+        const low = item.special && item.active && item.stock > 0 && item.stock <= 6;
+        let badgeHtml = item.special
+          ? '<span class="card-badge card-badge--special">Especial</span>'
+          : '<span class="card-badge">Clássico</span>';
+        if (soldOut && qty === 0) badgeHtml = '<span class="card-badge card-badge--sold">Esgotado</span>';
+        else if (!item.active) badgeHtml = '<span class="card-badge card-badge--sold">Pausado</span>';
+
+        let stockHtml = '';
+        if (item.special && item.active && item.stock > 0) {
+          stockHtml = `<div class="card-stock-line ${low ? 'is-low' : ''}"><i class="fas fa-fire-flame-curved" aria-hidden="true"></i> Só ${item.stock} un. no estoque — edição especial</div>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'burger-card' + (qty > 0 ? ' in-cart' : '') + (item.special ? ' burger-card--special' : '') + (soldOut && qty === 0 ? ' burger-card--soldout' : '');
+        card.innerHTML = `
+      <div class="card-top">
+        <div class="card-img">
+          <img src="${imgUrl}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;display:block;object-position:${item.imgPos || 'center'};">
+          ${badgeHtml}
+        </div>
+        <div class="card-info">
+          <div class="card-name">${item.name}</div>
+          <div class="card-short">${item.descShort}</div>
+          ${stockHtml}
+          <div class="card-price">R$ ${item.price.toFixed(2).replace('.', ',')} <small>/ un</small></div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="card-desc-full">${item.descFull}</div>
+        <div class="qty-control">
+          <button type="button" class="qty-btn decr" data-id="${item.id}">−</button>
+          <span class="qty-number ${qty > 0 ? 'has-qty' : ''}">${qty}</span>
+          <button type="button" class="qty-btn incr${canAdd ? '' : ' at-limit'}" data-id="${item.id}" ${canAdd ? '' : 'disabled'}>+</button>
+        </div>
+      </div>`;
+        el.appendChild(card);
+      });
+      el.querySelectorAll('.incr:not([disabled])').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(+b.dataset.id, 1); }));
+      el.querySelectorAll('.decr').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(+b.dataset.id, -1); }));
+      el.querySelectorAll('.burger-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const btn = card.querySelector('.incr');
+          if (btn && !btn.disabled) changeQty(+btn.dataset.id, 1);
+        });
+      });
+    }
+
+    function changeQty(id, d) {
+      refreshMenuItems();
+      const m = menuItems.find(x => x.id === id);
+      if (!m) return;
+      const ex = cart.find(i => i.id === id);
+      const curQ = ex ? ex.quantity : 0;
+      if (d > 0) {
+        if (!m.active || curQ >= m.stock) return;
+      }
+      if (ex) {
+        const nq = ex.quantity + d;
+        if (nq <= 0) {
+          cart = cart.filter(i => i.id !== id);
+          Object.keys(adicionaisState).forEach(k => { if (k.startsWith(id + '_')) delete adicionaisState[k]; });
+        }
+        else {
+          ex.quantity = nq;
+          if (d < 0) delete adicionaisState[`${id}_${nq}`];
+        }
+      }
+      else if (d > 0) {
+        if (m.active && m.stock > 0) cart.push({ ...m, quantity: 1 });
+      }
+      updateCartUI(); renderBurgers();
+      if (currentStep === 1) document.getElementById('emptyCartError').style.display = cart.length === 0 ? 'flex' : 'none';
+    }
+
+    // ============================================================
+    // ADICIONAIS — render por lanche
+    // ============================================================
+    function renderAdicionaisPorBurger() {
+      const wrap = document.getElementById('adicionaisContent');
+      if (!wrap) return;
+      if (cart.length === 0) {
+        wrap.innerHTML = `<div class="error-msg"><i class="fas fa-triangle-exclamation"></i> Adicione lanches primeiro.</div>`;
+        updateWizard();
+        return;
+      }
+      const enabled = ADICIONAIS_LIST.filter(a => adicionaisOwnerConfig[a.id] !== false);
+      if (enabled.length === 0) {
+        wrap.innerHTML = `<div class="drinks-empty"><i class="fas fa-ban"></i><p>Nenhum adicional disponível no momento.</p></div>`;
+        updateWizard();
+        return;
+      }
+      let html = '';
+      cart.forEach(item => {
+        const origBid = String(item.id);
+        for (let i = 0; i < item.quantity; i++) {
+          const bid = `${origBid}_${i}`;
+          if (!adicionaisState[bid]) adicionaisState[bid] = {};
+          const title = item.quantity > 1 ? `${i + 1}º ${item.name}` : item.name;
+          html += `<div class="adicional-burger-block">
+      <div class="adicional-burger-header">${title}</div>
+      <div class="adicional-list">`;
+          enabled.forEach(a => {
+            const qty = adicionaisState[bid][a.id] || 0;
+            const on = qty > 0;
+            html += `<div class="adicional-card active ${on ? 'toggled-on' : ''}" data-bid="${bid}" data-aid="${a.id}">
+        <div class="adicional-left">
+          <div class="adicional-emoji">${a.emoji}</div>
+          <div><div class="adicional-name">${a.name}</div><div class="adicional-price">+ R$ ${a.price.toFixed(2).replace('.', ',')}</div></div>
+        </div>
+        <div class="drink-qty-ctrl" style="flex-shrink:0;">
+          <button class="drink-qty-btn aqd" data-bid="${bid}" data-aid="${a.id}">−</button>
+          <span class="drink-qty-num" style="${on ? 'color:var(--accent);' : 'color:var(--text);'}">${qty}</span>
+          <button class="drink-qty-btn aqi" data-bid="${bid}" data-aid="${a.id}">+</button>
+        </div>
+      </div>`;
+          });
+          html += `</div></div>`;
+        }
+      });
+      wrap.innerHTML = html;
+      wrap.querySelectorAll('.aqi').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const bid = btn.dataset.bid, aid = btn.dataset.aid;
+          if (!adicionaisState[bid]) adicionaisState[bid] = {};
+          adicionaisState[bid][aid] = (adicionaisState[bid][aid] || 0) + 1;
+          renderAdicionaisPorBurger();
+        });
+      });
+      wrap.querySelectorAll('.aqd').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const bid = btn.dataset.bid, aid = btn.dataset.aid;
+          if (!adicionaisState[bid]) adicionaisState[bid] = {};
+          if (adicionaisState[bid][aid] > 0) {
+            adicionaisState[bid][aid] -= 1;
+          }
+          renderAdicionaisPorBurger();
+        });
+      });
+      updateWizard();
+    }
+
+    function hasAnyAdicionaisSelected() {
+      let any = false;
+      cart.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          ADICIONAIS_LIST.forEach(a => {
+            if ((adds[a.id] || 0) > 0 && adicionaisOwnerConfig[a.id] !== false) any = true;
+          });
+        }
+      });
+      return any;
+    }
+
+    function adicionaisTotal() {
+      let t = 0;
+      cart.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          ADICIONAIS_LIST.forEach(a => {
+            const qty = adds[a.id] || 0;
+            if (qty > 0 && adicionaisOwnerConfig[a.id] !== false) t += a.price * qty;
+          });
+        }
+      });
+      return t;
+    }
+
+    function adicionaisSummary() { return ''; }
+
+    function updateCartUI() {
+      const bQty = cart.reduce((s, i) => s + i.quantity, 0);
+      const dQty = Object.values(selectedDrinks).reduce((s, q) => s + q, 0);
+      const headerCount = document.getElementById('cartCountHeader');
+      headerCount.innerText = bQty + dQty;
+      headerCount.style.transform = 'scale(1.4)';
+      setTimeout(() => headerCount.style.transform = 'scale(1)', 150);
+      updateWizard();
+    }
+    function cartTotal() { return cart.reduce((s, i) => s + i.price * i.quantity, 0); }
+
+    // ============================================================
+    // WIZARD
+    // ============================================================
+    let selectedPayment = null;
+    document.querySelectorAll('.pay-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedPayment = card.dataset.pay;
+        document.getElementById('payError').style.display = 'none';
+        if (selectedPayment === 'Dinheiro') {
+          document.getElementById('trocoSection').style.display = 'block';
+        } else {
+          document.getElementById('trocoSection').style.display = 'none';
+          document.getElementById('payTroco').value = '';
+        }
+        
+        if (selectedPayment === 'Pix') {
+          const total = cartTotal() + drinksTotal() + adicionaisTotal();
+          document.getElementById('pixModalValue').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+          document.getElementById('pixOverlayModal').classList.add('open');
+        }
+      });
+    });
+
+    const pixModalCopyBtn = document.getElementById('pixModalCopyBtn');
+    if (pixModalCopyBtn) {
+      pixModalCopyBtn.addEventListener('click', () => {
+        const input = document.getElementById('pixModalKey');
+        input.select();
+        input.setSelectionRange(0, 99999); 
+        document.execCommand("copy");
+        const icon = document.getElementById('pixModalCopyIcon');
+        icon.className = 'fas fa-check';
+        setTimeout(() => { icon.className = 'fas fa-copy'; }, 2000);
+      });
+    }
+
+    document.getElementById('pixModalClose').addEventListener('click', () => {
+      document.getElementById('pixOverlayModal').classList.remove('open');
+    });
+    document.getElementById('pixModalOkBtn').addEventListener('click', () => {
+      document.getElementById('pixOverlayModal').classList.remove('open');
+    });
+
+    function updateWizard() {
+      document.querySelectorAll('.step-item').forEach((el, i) => {
+        el.classList.remove('active', 'completed');
+        if (i + 1 < currentStep) el.classList.add('completed');
+        if (i + 1 === currentStep) el.classList.add('active');
+      });
+
+      const nextBtn = document.getElementById('nextButton');
+      const mainEl = document.getElementById('nextButtonMain');
+      const hintEl = document.getElementById('nextButtonHint');
+      const iconEl = document.getElementById('nextButtonIcon');
+      if (!nextBtn || !mainEl || !hintEl || !iconEl) return;
+
+      nextBtn.classList.remove('btn-next--whatsapp', 'btn-next--need-cart', 'btn-next--extras-nudge', 'btn-next--extras-ok');
+
+      if (currentStep === 5) {
+        mainEl.textContent = 'Enviar pelo WhatsApp';
+        hintEl.textContent = 'Abre o app com o pedido pronto';
+        hintEl.hidden = false;
+        iconEl.className = 'fab fa-whatsapp';
+        nextBtn.classList.add('btn-next--whatsapp');
+        const prevBtnW = document.getElementById('prevStepBtn');
+        if (prevBtnW) prevBtnW.hidden = false;
+        return;
+      }
+
+      let main = 'Continuar';
+      let hint = '';
+      let icon = 'fas fa-arrow-right';
+
+      if (currentStep === 1) {
+        if (cart.length === 0) {
+          main = 'Escolha um lanche para continuar';
+          hint = 'Toque em + no card do lanche';
+          icon = 'fas fa-burger';
+          nextBtn.classList.add('btn-next--need-cart');
+        } else {
+          main = 'Continuar';
+          hint = 'Próximo: extras (opcional)';
+          icon = 'fas fa-arrow-right';
+        }
+      } else if (currentStep === 2) {
+        if (hasAnyAdicionaisSelected()) {
+          main = 'Continuar com extras';
+          hint = 'Bora escolher a bebida';
+          icon = 'fas fa-circle-check';
+          nextBtn.classList.add('btn-next--extras-ok');
+        } else {
+          main = 'Continuar sem extras';
+          hint = 'Última chance neste pedido — não deixa o extra escapar';
+          icon = 'fas fa-forward';
+          nextBtn.classList.add('btn-next--extras-nudge');
+        }
+      } else if (currentStep === 3) {
+        main = 'Continuar';
+        hint = 'Bebida é opcional';
+        icon = 'fas fa-arrow-right';
+      } else if (currentStep === 4) {
+        main = 'Continuar';
+        hint = 'Entrega grátis — só mandar seu endereço';
+        icon = 'fas fa-arrow-right';
+      }
+
+      mainEl.textContent = main;
+      hintEl.textContent = hint;
+      hintEl.hidden = !hint;
+      iconEl.className = icon;
+
+      const prevBtn = document.getElementById('prevStepBtn');
+      if (prevBtn) prevBtn.hidden = currentStep <= 1;
+    }
+
+    function showStage(n) {
+      ['stage1', 'stage-adicionais', 'stage3', 'stage-entrega', 'stage-finalizar'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = i + 1 === n ? 'block' : 'none';
+      });
+      currentStep = n;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (n === 2) renderAdicionaisPorBurger();
+      else if (n === 3) renderDrinks();
+      else if (n === 5) buildReview();
+      updateWizard();
+    }
+
+    // ============================================================
+    // STEP 3 — BEBIDAS (visão do cliente)
+    // ============================================================
+    function renderDrinks() {
+      const wrap = document.getElementById('drinksContent');
+      const active = availableDrinks.filter(d => d.active && d.stock > 0);
+
+      if (active.length === 0) {
+        wrap.innerHTML = `
+      <div class="drinks-empty">
+        <i class="fas fa-wine-glass-empty"></i>
+        <p>Nenhuma bebida disponível hoje.<br>Você pode confirmar com o atendente pelo WhatsApp.</p>
+      </div>`;
+        return;
+      }
+
+      const noSel = Object.keys(selectedDrinks).length === 0;
+      let html = `
+    <div class="drink-none-btn ${noSel ? 'selected' : ''}" id="drinkNoneBtn">
+      <div class="drink-none-icon"><i class="fas fa-ban"></i></div>
+      <span class="drink-none-label">Não quero bebida</span>
+    </div>
+    <div class="drink-grid">`;
+
+      active.forEach(d => {
+        const qty = selectedDrinks[d.id] || 0;
+        const priceHtml = d.price > 0
+          ? `<span class="drink-card-price">R$ ${parseFloat(d.price).toFixed(2).replace('.', ',')}</span>`
+          : `<span class="drink-card-price free">incluso</span>`;
+        const dispLabel = d.stock === 1 ? '1 disponível hoje' : `${d.stock} disponíveis hoje`;
+        html += `
+      <div class="drink-card ${qty > 0 ? 'selected' : ''}" data-did="${d.id}">
+        <div class="drink-card-top">
+          <div class="drink-card-emoji">${d.emoji}</div>
+          <div class="drink-card-info">
+            <div class="drink-card-name">${d.name}</div>
+          </div>
+          <div class="drink-card-right">
+            ${priceHtml}
+            <div class="drink-check"><i class="fas fa-check"></i></div>
+          </div>
+        </div>
+        <div class="drink-qty-row">
+          <span class="drink-qty-label">${dispLabel}</span>
+          <div class="drink-qty-ctrl">
+            <button class="drink-qty-btn dqd" data-did="${d.id}">−</button>
+            <span class="drink-qty-num">${qty}</span>
+            <button class="drink-qty-btn dqi" data-did="${d.id}">+</button>
+          </div>
+        </div>
+      </div>`;
+      });
+      html += `</div>`;
+      wrap.innerHTML = html;
+
+      // Selecionar / desselecionar card
+      wrap.querySelectorAll('.drink-card').forEach(card => {
+        card.addEventListener('click', e => {
+          if (e.target.closest('.drink-qty-btn')) return;
+          const id = card.dataset.did;
+          if (selectedDrinks[id]) delete selectedDrinks[id];
+          else selectedDrinks[id] = 1;
+          renderDrinks();
+          updateCartUI();
+        });
+      });
+
+      // + / − bebida
+      wrap.querySelectorAll('.dqi').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const id = btn.dataset.did;
+          const d = availableDrinks.find(x => x.id === id);
+          const cur = selectedDrinks[id] || 0;
+          if (cur < d.stock) { selectedDrinks[id] = cur + 1; renderDrinks(); updateCartUI(); }
+        });
+      });
+      wrap.querySelectorAll('.dqd').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const id = btn.dataset.did;
+          const cur = selectedDrinks[id] || 0;
+          if (cur <= 1) delete selectedDrinks[id]; else selectedDrinks[id] = cur - 1;
+          renderDrinks();
+          updateCartUI();
+        });
+      });
+
+      document.getElementById('drinkNoneBtn').addEventListener('click', () => {
+        selectedDrinks = {}; renderDrinks(); updateCartUI();
+      });
+    }
+
+    function drinksSummary() {
+      const lines = [];
+      Object.entries(selectedDrinks).forEach(([id, qty]) => {
+        const d = availableDrinks.find(x => x.id === id);
+        if (d) lines.push(`${qty}x ${d.name}`);
+      });
+      return lines.length ? lines.join(', ') : 'Nenhuma';
+    }
+
+    function drinksTotal() {
+      return Object.entries(selectedDrinks).reduce((s, [id, qty]) => {
+        const d = availableDrinks.find(x => x.id === id);
+        return s + (d && d.price > 0 ? parseFloat(d.price) * qty : 0);
+      }, 0);
+    }
+
+    // ============================================================
+    // REVIEW
+    // ============================================================
+    function buildReview() {
+      const rDiv = document.getElementById('reviewContainer');
+      const tDiv = document.getElementById('reviewTotal');
+      if (cart.length === 0) {
+        rDiv.innerHTML = `<div class="error-msg"><i class="fas fa-triangle-exclamation"></i> Carrinho vazio.</div>`;
+        tDiv.innerHTML = ''; return;
+      }
+      const nome = document.getElementById('clientName')?.value.trim() || '-';
+      const phone = document.getElementById('clientPhone')?.value.trim() || '-';
+      const end = document.getElementById('clientAddress')?.value.trim() || '-';
+      const ref = document.getElementById('clientRef')?.value.trim() || '';
+      const obs = document.getElementById('clientObs')?.value.trim() || '';
+
+      const lHtml = cart.map(i =>
+        `<div class="review-item"><span class="review-item-key">${i.quantity}× ${i.name}</span><span class="review-item-val">R$ ${(i.price * i.quantity).toFixed(2).replace('.', ',')}</span></div>`
+      ).join('');
+
+      let dHtml = '';
+      Object.entries(selectedDrinks).forEach(([id, qty]) => {
+        const d = availableDrinks.find(x => x.id === id);
+        if (d) dHtml += `<div class="review-item"><span class="review-item-key">${qty}× ${d.emoji} ${d.name}</span><span class="review-item-val">${d.price > 0 ? 'R$ ' + (parseFloat(d.price) * qty).toFixed(2).replace('.', ',') : 'incluso'}</span></div>`;
+      });
+      if (!dHtml) dHtml = `<div class="review-item"><span class="review-item-key">Bebida</span><span class="review-item-val">Nenhuma</span></div>`;
+
+      // Adicionais por lanche
+      let addHtml = '';
+      cart.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          const ativos = ADICIONAIS_LIST.filter(a => (adds[a.id] || 0) > 0 && adicionaisOwnerConfig[a.id] !== false);
+          if (ativos.length) {
+            addHtml += `<div class="review-item" style="flex-direction:column;align-items:flex-start;gap:4px">`;
+            const title = item.quantity > 1 ? `${i+1}º ${item.name}` : item.name;
+            addHtml += `<span class="review-item-key" style="color:var(--accent)">${title}</span>`;
+            ativos.forEach(a => {
+              const qty = adds[a.id];
+              const qtyStr = qty > 1 ? `${qty}× ` : '';
+              addHtml += `<span style="font-size:.75rem;color:var(--muted);padding-left:8px">${qtyStr}${a.emoji} ${a.name} — R$ ${(a.price * qty).toFixed(2).replace('.', ',')}</span>`;
+            });
+            addHtml += `</div>`;
+          }
+        }
+      });
+      if (!addHtml) addHtml = `<div class="review-item"><span class="review-item-key">Adicionais</span><span class="review-item-val">Nenhum</span></div>`;
+
+      let payHtml = '';
+      if (selectedPayment === 'Dinheiro') {
+        const troco = document.getElementById('payTroco').value.trim();
+        const tStr = troco ? `(Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')})` : '(Sem troco)';
+        payHtml = `<div class="review-item"><span class="review-item-key">Dinheiro</span><span class="review-item-val">${tStr}</span></div>`;
+      } else {
+        payHtml = `<div class="review-item"><span class="review-item-key">${selectedPayment || '—'}</span><span class="review-item-val">Na entrega</span></div>`;
+      }
+
+      rDiv.innerHTML = `
+    <div class="review-card"><div class="review-section-title">🍔 Lanches</div>${lHtml}</div>
+    <div class="review-card"><div class="review-section-title">➕ Adicionais</div>${addHtml}</div>
+    <div class="review-card"><div class="review-section-title">🥤 Bebidas</div>${dHtml}</div>
+    <div class="review-card"><div class="review-section-title">💳 Pagamento</div>${payHtml}</div>
+    <div class="review-card">
+      <div class="review-section-title">📋 Entrega</div>
+      <div class="review-item"><span class="review-item-key">Entrega</span><span class="review-item-val" style="color:var(--accent);font-weight:800">GRÁTIS</span></div>
+      <div class="review-item"><span class="review-item-key">Nome</span><span class="review-item-val">${nome}</span></div>
+      <div class="review-item"><span class="review-item-key">WhatsApp</span><span class="review-item-val">${phone}</span></div>
+      <div class="review-item"><span class="review-item-key">Endereço</span><span class="review-item-val">${end}</span></div>
+      ${ref ? `<div class="review-item"><span class="review-item-key">Referência</span><span class="review-item-val">${ref}</span></div>` : ''}
+      ${obs ? `<div class="review-item"><span class="review-item-key">Observação</span><span class="review-item-val">${obs}</span></div>` : ''}
+    </div>`;
+
+      const total = cartTotal() + drinksTotal() + adicionaisTotal();
+      tDiv.innerHTML = `
+    <div class="review-total-box">
+      <span class="review-total-label">Total do pedido</span>
+      <span class="review-total-val">R$ ${total.toFixed(2).replace('.', ',')}</span>
+    </div>`;
+    }
+
+    // ============================================================
+    // VALIDAÇÃO + NAVEGAÇÃO
+    // ============================================================
+    function validateStep(n) {
+      if (n === 1) {
+        if (cart.length === 0) { document.getElementById('emptyCartError').style.display = 'flex'; return false; }
+        document.getElementById('emptyCartError').style.display = 'none'; return true;
+      }
+      if (n === 4) {
+        const ok = document.getElementById('clientName').value.trim() && document.getElementById('clientPhone').value.trim() && document.getElementById('clientAddress').value.trim();
+        document.getElementById('dataError').style.display = ok ? 'none' : 'flex';
+        return !!ok;
+      }
+      if (n === 5) {
+        const errorEl = document.getElementById('payError');
+        if (!selectedPayment) {
+          errorEl.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Escolha uma forma de pagamento para continuar.';
+          errorEl.style.display = 'flex';
+          return false;
+        }
+
+        if (selectedPayment === 'Dinheiro') {
+          const trocoVal = parseFloat(document.getElementById('payTroco').value.trim());
+          const total = cartTotal() + drinksTotal() + adicionaisTotal();
+
+          if (!isNaN(trocoVal) && trocoVal < total) {
+            errorEl.innerHTML = `<i class="fas fa-triangle-exclamation"></i> O valor do troco não pode ser menor que o total do pedido (R$ ${total.toFixed(2).replace('.', ',')}).`;
+            errorEl.style.display = 'flex';
+            return false;
+          }
+        }
+
+        errorEl.style.display = 'none';
+        return true;
+      }
+      return true;
+    }
+
+    document.getElementById('nextButton').addEventListener('click', () => {
+      if (!validateStep(currentStep)) return;
+      if (currentStep === 5) { sendWhatsApp(); return; }
+      showStage(currentStep + 1);
+    });
+
+    document.getElementById('prevStepBtn').addEventListener('click', () => {
+      if (currentStep > 1) showStage(currentStep - 1);
+    });
+
+    document.getElementById('openCartSummary').addEventListener('click', () => {
+      if (cart.length === 0) { alert("Carrinho vazio!"); if (currentStep !== 1) showStage(1); }
+      else alert(`Carrinho:\n${cart.map(i => `${i.quantity}x ${i.name}`).join('\n')}\nTotal: R$ ${cartTotal().toFixed(2)}`);
+    });
+
+    // ============================================================
+    // WHATSAPP
+    // ============================================================
+    function sendWhatsApp() {
+      if (cart.length === 0) { alert("Carrinho vazio!"); return; }
+      const nome = document.getElementById('clientName').value.trim();
+      const phone = document.getElementById('clientPhone').value.trim();
+      const end = document.getElementById('clientAddress').value.trim();
+      if (!nome || !phone || !end) { alert("Preencha nome, telefone e endereço."); showStage(4); return; }
+
+      const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const data = new Date().toLocaleDateString('pt-BR');
+      const obs = document.getElementById('clientObs').value.trim();
+      const ref = document.getElementById('clientRef').value.trim();
+
+      // Salvar os dados do cliente para a próxima vez sair automático
+      try {
+        localStorage.setItem('cb-client-info-v1', JSON.stringify({
+          name: nome, phone: phone, address: end, ref: ref
+        }));
+      } catch (e) {}
+
+      // Lanches
+      const itemsLines = cart.map(i => `   • ${i.quantity}x ${i.name} — R$ ${(i.price * i.quantity).toFixed(2).replace('.', ',')}`).join('\n');
+
+      // Adicionais por lanche
+      let addMsg = '';
+      cart.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          const adds = adicionaisState[`${item.id}_${i}`] || {};
+          const ativos = ADICIONAIS_LIST.filter(a => (adds[a.id] || 0) > 0 && adicionaisOwnerConfig[a.id] !== false);
+          if (ativos.length) {
+            const title = item.quantity > 1 ? `${i+1}º ${item.name}` : item.name;
+            addMsg += `   ${title}:\n`;
+            ativos.forEach(a => {
+              const qty = adds[a.id];
+              const qtyStr = qty > 1 ? `${qty}× ` : '';
+              addMsg += `     • ${qtyStr}${a.name} — R$ ${(a.price * qty).toFixed(2).replace('.', ',')}\n`;
+            });
+          }
+        }
+      });
+      const addLines = addMsg.trim() || '   • Nenhum';
+
+      // Bebidas
+      const drinksLines = Object.entries(selectedDrinks).length
+        ? Object.entries(selectedDrinks).map(([id, qty]) => {
+          const d = availableDrinks.find(x => x.id === id);
+          return d ? `   • ${qty}x ${d.name}` + (d.price > 0 ? ` — R$ ${(parseFloat(d.price) * qty).toFixed(2).replace('.', ',')}` : ' (incluso)') : '';
+        }).filter(Boolean).join('\n')
+        : '   • Nenhuma';
+
+      const total = (cartTotal() + drinksTotal() + adicionaisTotal()).toFixed(2).replace('.', ',');
+
+      let payStr = selectedPayment;
+      if (selectedPayment === 'Dinheiro') {
+        const troco = document.getElementById('payTroco').value.trim();
+        if (troco) payStr += ` (Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')} -> *Mandar via Pix na entrega*)`;
+        else payStr += ' (Sem troco)';
+      }
+
+      let msg =
+        `*PEDIDO — CENTRAL BURGER*
+━━━━━━━━━━━━━━━━━━━━━━━
+*Horário:* ${hora} | ${data}
+*Cliente:* ${nome}
+*WhatsApp:* ${phone}
+*Endereço:* ${end}`;
+      if (ref) msg += `\n*Referência:* ${ref}`;
+      msg += `\n*Entrega:* GRÁTIS`;
+      msg +=
+        `
+━━━━━━━━━━━━━━━━━━━━━━━
+*LANCHES:*
+${itemsLines}
+
+*ADICIONAIS:*
+${addLines}
+
+*BEBIDAS:*
+${drinksLines}`;
+      if (obs) msg += `\n\n*Observações:* ${obs}`;
+      msg +=
+        `
+━━━━━━━━━━━━━━━━━━━━━━━
+*Pagamento:* ${payStr}
+*TOTAL DO PEDIDO: R$ ${total}*
+━━━━━━━━━━━━━━━━━━━━━━━
+_Pedido enviado via Central Burger App_ ✅`;
+
+      window.open(`https://wa.me/556798593098?text=${encodeURIComponent(msg)}`, '_blank');
+
+      cart.forEach(line => {
+        const cat = BURGER_CATALOG.find(b => b.id === line.id);
+        if (!cat || !cat.special) return;
+        const key = String(line.id);
+        const def = defaultBurgerState()[key] || { active: true, stock: 0 };
+        const cur = { ...def, ...burgerState[key] };
+        const st = typeof cur.stock === 'number' ? cur.stock : 0;
+        burgerState[key] = { ...cur, stock: Math.max(0, st - line.quantity) };
+      });
+      saveBurgerState(burgerState);
+      refreshMenuItems();
+
+      // Decrement stock
+      Object.entries(selectedDrinks).forEach(([id, qty]) => {
+        const d = availableDrinks.find(x => x.id === id);
+        if (d) d.stock = Math.max(0, d.stock - qty);
+      });
+      saveDrinks(availableDrinks);
+      selectedDrinks = {};
+      adicionaisState = {};
+      cart = [];
+      updateCartUI();
+      renderBurgers();
+      showStage(1);
+    }
+
+    // ============================================================
+    // PAINEL DO DONO — acesso por 5 toques rápidos no logo
+    // ============================================================
+    let tapCount = 0, tapTimer = null;
+    document.getElementById('logoTap').addEventListener('click', () => {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => tapCount = 0, 2000);
+      if (tapCount >= 5) { tapCount = 0; openOwner(); }
+    });
+
+    function openOwner() {
+      pinInput = ''; updatePinDots();
+      document.getElementById('ownerMain').classList.remove('visible');
+      document.getElementById('pinScreen').style.display = 'flex';
+      document.getElementById('ownerOverlay').classList.add('open');
+      const badge = document.getElementById('storageModeBadge');
+      if (badge) badge.textContent = USE_CLOUD ? '☁️ Nuvem ativa — visível p/ todos' : '⚠️ Modo local — configure JSONBin';
+    }
+
+    document.getElementById('pinCloseBtn').addEventListener('click', () => document.getElementById('ownerOverlay').classList.remove('open'));
+    document.getElementById('ownerCloseBtn').addEventListener('click', () => document.getElementById('ownerOverlay').classList.remove('open'));
+
+    // --- PIN ---
+    let pinInput = '';
+    document.querySelectorAll('.pin-key[data-k]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (pinInput.length >= 4) return;
+        pinInput += btn.dataset.k; updatePinDots();
+        if (pinInput.length === 4) checkPin();
+      });
+    });
+    document.getElementById('pinDelBtn').addEventListener('click', () => {
+      pinInput = pinInput.slice(0, -1); updatePinDots();
+    });
+
+    function updatePinDots() {
+      for (let i = 0; i < 4; i++) {
+        const d = document.getElementById(`pd${i}`);
+        d.classList.remove('filled', 'error');
+        if (i < pinInput.length) d.classList.add('filled');
+      }
+    }
+
+    function checkPin() {
+      if (pinInput === OWNER_PIN) {
+        document.getElementById('pinScreen').style.display = 'none';
+        ownerDrafts = JSON.parse(JSON.stringify(availableDrinks));
+        renderOwnerList();
+        renderOwnerBurgerList();
+        document.getElementById('ownerMain').classList.add('visible');
+      } else {
+        for (let i = 0; i < 4; i++) document.getElementById(`pd${i}`).classList.add('error');
+        setTimeout(() => { pinInput = ''; updatePinDots(); }, 700);
+      }
+    }
+
+    // --- Tabs do painel do dono ---
+    function switchOwnerTab(tab) {
+      document.getElementById('panelBebidas').classList.toggle('active', tab === 'bebidas');
+      document.getElementById('panelLanches').classList.toggle('active', tab === 'lanches');
+      document.getElementById('panelAcomp').classList.toggle('active', tab === 'acomp');
+      document.getElementById('tabBebidas').classList.toggle('active', tab === 'bebidas');
+      document.getElementById('tabLanches').classList.toggle('active', tab === 'lanches');
+      document.getElementById('tabAcomp').classList.toggle('active', tab === 'acomp');
+      if (tab === 'lanches') renderOwnerBurgerList();
+      if (tab === 'acomp') renderOwnerAcompList();
+    }
+
+    function renderOwnerBurgerList() {
+      const el = document.getElementById('ownerBurgerList');
+      if (!el) return;
+      el.innerHTML = '';
+      BURGER_CATALOG.forEach(item => {
+        const key = String(item.id);
+        const def = defaultBurgerState()[key] || { active: true, stock: 0 };
+        const cur = { ...def, ...burgerState[key] };
+        const on = cur.active !== false;
+        const stock = typeof cur.stock === 'number' ? cur.stock : 0;
+        const row = document.createElement('div');
+        row.className = 'owner-drink-item' + (on ? '' : ' inactive');
+        const stockBlock = item.special
+          ? `<div class="owner-drink-stock-row">
+        <span class="owner-drink-stock-label">Estoque (edição especial)</span>
+        <div class="owner-stock-ctrl">
+          <button type="button" class="owner-stock-btn bskm" data-burger-id="${item.id}">−</button>
+          <span class="owner-stock-num" id="bsk-${item.id}">${stock}</span>
+          <button type="button" class="owner-stock-btn bskp" data-burger-id="${item.id}">+</button>
+        </div>
+      </div>`
+          : `<div class="owner-drink-stock-row" style="font-size:.68rem;color:var(--muted)">Simples — estoque livre no app</div>`;
+        row.innerHTML = `
+      <div class="owner-drink-top">
+        <div class="owner-drink-emoji">${item.special ? '✨' : '🍔'}</div>
+        <div class="owner-drink-info">
+          <div class="owner-drink-name">${item.name}</div>
+          <div class="owner-drink-meta">R$ ${item.price.toFixed(2).replace('.', ',')}${item.special ? ' · especial' : ''}</div>
+        </div>
+        <div class="owner-drink-actions">
+          <div class="toggle-btn ${on ? 'on' : ''}" data-burger-toggle="${item.id}"></div>
+        </div>
+      </div>
+      ${stockBlock}`;
+        el.appendChild(row);
+      });
+      el.querySelectorAll('[data-burger-toggle]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = String(btn.getAttribute('data-burger-toggle'));
+          const def = defaultBurgerState()[id] || { active: true, stock: 20 };
+          const cur = { ...def, ...burgerState[id] };
+          burgerState[id] = { ...cur, active: !(cur.active !== false) };
+          saveBurgerState(burgerState);
+          refreshMenuItems();
+          renderBurgers();
+          renderOwnerBurgerList();
+        });
+      });
+      el.querySelectorAll('.bskp').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = String(btn.dataset.burgerId);
+          const def = defaultBurgerState()[id] || { active: true, stock: 0 };
+          const cur = { ...def, ...burgerState[id] };
+          const st = typeof cur.stock === 'number' ? cur.stock : 0;
+          burgerState[id] = { ...cur, stock: st + 1 };
+          saveBurgerState(burgerState);
+          refreshMenuItems();
+          renderBurgers();
+          renderOwnerBurgerList();
+        });
+      });
+      el.querySelectorAll('.bskm').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = String(btn.dataset.burgerId);
+          const def = defaultBurgerState()[id] || { active: true, stock: 0 };
+          const cur = { ...def, ...burgerState[id] };
+          const st = typeof cur.stock === 'number' ? cur.stock : 0;
+          burgerState[id] = { ...cur, stock: Math.max(0, st - 1) };
+          saveBurgerState(burgerState);
+          refreshMenuItems();
+          renderBurgers();
+          renderOwnerBurgerList();
+        });
+      });
+    }
+
+    // --- Lista de acompanhamentos do dono ---
+    function renderOwnerAcompList() {
+      const el = document.getElementById('ownerAcompList');
+      el.innerHTML = '';
+      ADICIONAIS_LIST.forEach(a => {
+        const isOn = adicionaisOwnerConfig[a.id] !== false;
+        const item = document.createElement('div');
+        item.className = 'owner-acomp-item' + (isOn ? ' active-on' : ' inactive');
+        item.innerHTML = `
+          <div class="owner-acomp-emoji">${a.emoji}</div>
+          <div class="owner-acomp-info">
+            <div class="owner-acomp-name">${a.name}</div>
+            <div class="owner-acomp-meta">R$ ${a.price.toFixed(2).replace('.', ',')} por un.</div>
+          </div>
+          <div class="toggle-btn ${isOn ? 'on' : ''}" data-acid="${a.id}"></div>`;
+        el.appendChild(item);
+      });
+      el.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.acid;
+          adicionaisOwnerConfig[id] = !btn.classList.contains('on');
+          saveAdicionaisOwnerConfig(adicionaisOwnerConfig);
+          renderOwnerAcompList();
+        });
+      });
+    }
+
+    // --- Lista de bebidas do dono ---
+    function renderOwnerList() {
+      const el = document.getElementById('ownerList');
+      if (ownerDrafts.length === 0) {
+        el.innerHTML = `<div class="owner-empty"><i class="fas fa-wine-glass-empty"></i><p>Nenhuma bebida cadastrada.<br>Use o formulário abaixo para adicionar.</p></div>`;
+        return;
+      }
+      el.innerHTML = '';
+      ownerDrafts.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'owner-drink-item' + (d.active ? '' : ' inactive');
+        item.innerHTML = `
+      <div class="owner-drink-top">
+        <div class="owner-drink-emoji">${d.emoji}</div>
+        <div class="owner-drink-info">
+          <div class="owner-drink-name">${d.name}</div>
+          <div class="owner-drink-meta">${d.price > 0 ? 'R$ ' + parseFloat(d.price).toFixed(2).replace('.', ',') : 'sem cobrança'} · ${d.stock} un.</div>
+        </div>
+        <div class="owner-drink-actions">
+          <div class="toggle-btn ${d.active ? 'on' : ''}" data-tid="${d.id}"></div>
+          <button class="delete-btn" data-del="${d.id}"><i class="fas fa-trash-can"></i></button>
+        </div>
+      </div>
+      <div class="owner-drink-stock-row">
+        <span class="owner-drink-stock-label">Estoque atual</span>
+        <div class="owner-stock-ctrl">
+          <button class="owner-stock-btn osm" data-sid="${d.id}">−</button>
+          <span class="owner-stock-num" id="sk-${d.id}">${d.stock}</span>
+          <button class="owner-stock-btn osp" data-sid="${d.id}">+</button>
+        </div>
+      </div>`;
+        el.appendChild(item);
+      });
+
+      el.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const d = ownerDrafts.find(x => x.id === btn.dataset.tid);
+          if (d) { d.active = !d.active; renderOwnerList(); }
+        });
+      });
+      el.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          ownerDrafts = ownerDrafts.filter(x => x.id !== btn.dataset.del);
+          renderOwnerList();
+        });
+      });
+      el.querySelectorAll('.osm').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const d = ownerDrafts.find(x => x.id === btn.dataset.sid);
+          if (d && d.stock > 0) { d.stock--; document.getElementById(`sk-${d.id}`).textContent = d.stock; }
+        });
+      });
+      el.querySelectorAll('.osp').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const d = ownerDrafts.find(x => x.id === btn.dataset.sid);
+          if (d) { d.stock++; document.getElementById(`sk-${d.id}`).textContent = d.stock; }
+        });
+      });
+    }
+
+    // --- Emoji picker ---
+    document.querySelectorAll('.emoji-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.emoji-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedEmoji = opt.dataset.e;
+      });
+    });
+
+    // --- Adicionar bebida ---
+    document.getElementById('addDrinkBtn').addEventListener('click', () => {
+      const name = document.getElementById('newName').value.trim();
+      const price = parseFloat(document.getElementById('newPrice').value) || 0;
+      const stock = parseInt(document.getElementById('newStock').value) || 10;
+      if (!name) { document.getElementById('newName').focus(); return; }
+      ownerDrafts.push({ id: Date.now().toString(), name, emoji: selectedEmoji, price, stock, active: true });
+      document.getElementById('newName').value = '';
+      document.getElementById('newPrice').value = '';
+      document.getElementById('newStock').value = '10';
+      renderOwnerList();
+    });
+
+    // --- Publicar ---
+    document.getElementById('publishBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('publishBtn');
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Salvando...';
+      btn.disabled = true;
+      const ok = await saveDrinks(ownerDrafts);
+      btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Publicar cardápio de bebidas';
+      btn.disabled = false;
+      if (ok) {
+        availableDrinks = JSON.parse(JSON.stringify(ownerDrafts));
+        selectedDrinks = {};
+        const t = document.getElementById('toast');
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2800);
+      } else {
+        alert(USE_CLOUD
+          ? 'Erro ao salvar na nuvem. Verifique sua conexão e as chaves do JSONBin no arquivo.'
+          : 'Erro ao salvar localmente. Tente novamente.');
+      }
+    });
+
+    showStage(1);
+  </script>
+</body>
+
+</html>
