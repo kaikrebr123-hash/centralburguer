@@ -2438,18 +2438,11 @@
         margin: 14px;
       }
 
-      .cta-bar {
-        max-width: 760px;
-        left: 50%;
-        transform: translateX(-50%);
-        right: auto;
-        width: 100%;
-        padding: 12px;
-      }
-
       .card-img {
         width: 150px;
         min-width: 150px;
+        height: 150px;
+        min-height: 150px;
       }
     }
 
@@ -2460,6 +2453,336 @@
       .cta-bar {
         max-width: 920px;
       }
+    }
+
+    /* ===== CENTRALIZAÇÃO E AJUSTE DA FOTO DOS LANCHES ===== */
+    .card-img, .cp-item-img, .burger-photo-preview {
+      width: 130px;
+      height: 130px;
+      min-width: 130px;
+      min-height: 130px;
+      flex-shrink: 0;
+      background: #141414;
+      position: relative;
+      overflow: hidden;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .card-img img, .cp-item-img img, .burger-photo-preview img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      display: block !important;
+      margin: 0 auto !important;
+    }
+
+    /* ===== BADGE DE STATUS DE FUNCIONAMENTO (HEADER) ===== */
+    .store-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .25s ease;
+      white-space: nowrap;
+    }
+
+    .store-status-pill--open {
+      background: rgba(37, 211, 102, 0.15);
+      color: #25d366;
+      border: 1px solid rgba(37, 211, 102, 0.35);
+    }
+
+    .store-status-pill--closed {
+      background: rgba(232, 93, 93, 0.15);
+      color: #e85d5d;
+      border: 1px solid rgba(232, 93, 93, 0.35);
+    }
+
+    .store-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .store-status-pill--open .store-status-dot {
+      background: #25d366;
+      box-shadow: 0 0 8px #25d366;
+      animation: pulse-dot-status 1.5s infinite;
+    }
+
+    .store-status-pill--closed .store-status-dot {
+      background: #e85d5d;
+    }
+
+    @keyframes pulse-dot-status {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: .6; }
+    }
+
+    /* ===== BANNER CRIATIVO DE LOJA FECHADA ===== */
+    .creative-closed-banner {
+      background: linear-gradient(145deg, #1a0f0f 0%, #120c0c 55%, #0d0a08 100%);
+      border: 2px solid rgba(232, 93, 93, 0.55);
+      border-radius: var(--radius);
+      padding: 20px 16px 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(232, 93, 93, 0.12);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInSlide .35s ease both;
+    }
+
+    .creative-closed-banner::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -15%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(232, 93, 93, 0.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .creative-closed-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .creative-closed-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(232, 93, 93, 0.15);
+      border: 1px solid rgba(232, 93, 93, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #e85d5d;
+      flex-shrink: 0;
+    }
+
+    .creative-closed-eyebrow {
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #e85d5d;
+      margin-bottom: 2px;
+    }
+
+    .creative-closed-title {
+      font-family: var(--display);
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: .5px;
+    }
+
+    .creative-closed-body {
+      font-size: .86rem;
+      color: #e8e8e8;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .creative-closed-body strong {
+      color: var(--accent);
+    }
+
+    .creative-closed-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.14);
+      font-size: .74rem;
+      color: var(--muted);
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+
+    .creative-closed-pill {
+      background: rgba(232, 197, 71, 0.16);
+      color: var(--accent);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+    }
+
+    .burgers-list.is-store-closed {
+      opacity: .42;
+      pointer-events: none;
+      filter: grayscale(.35);
+      user-select: none;
+    }
+
+    .stage-title.is-store-closed-title {
+      opacity: .55;
+    }
+
+    /* ===== BOTÃO + MODAL ADICIONAR LANCHE ===== */
+    .btn-open-add-burger {
+      width: 100%;
+      background: var(--accent);
+      border: none;
+      color: #000;
+      font-family: var(--display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: .4px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      transition: transform .15s, filter .15s;
+    }
+
+    .btn-open-add-burger:active {
+      transform: scale(.98);
+      filter: brightness(.92);
+    }
+
+    .add-burger-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 320;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .add-burger-overlay.open {
+      display: flex;
+      animation: fade-up .22s ease both;
+    }
+
+    .add-burger-modal {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 18px 18px 0 0;
+      width: 100%;
+      max-width: 520px;
+      max-height: min(92vh, 720px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.55);
+      animation: burgerModalIn .28s ease both;
+    }
+
+    @keyframes burgerModalIn {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .add-burger-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .add-burger-modal-title {
+      font-family: var(--display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: .3px;
+    }
+
+    .add-burger-modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .add-burger-modal-body {
+      padding: 14px 18px 18px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+    }
+
+    .add-burger-modal .btn-add {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-weight: 800;
+    }
+
+    .add-burger-modal .btn-add i {
+      color: #000;
+    }
+
+    @media (min-width: 560px) {
+      .add-burger-overlay {
+        align-items: center;
+        padding: 24px;
+      }
+      .add-burger-modal {
+        border-radius: 16px;
+        max-height: 88vh;
+      }
+    }
+
+    /* ===== BOTOES DE OVERRIDE NO PAINEL DO DONO ===== */
+    .btn-store-override {
+      flex: 1;
+      padding: 8px 10px;
+      font-size: .72rem;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .btn-store-override.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 12px rgba(232, 197, 71, 0.2);
     }
   </style>
 </head>
@@ -2561,6 +2884,21 @@
 
       <div class="owner-body">
 
+        <!-- STATUS DA LOJA (CONTROLE DO PATRÃO) -->
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:14px;">
+          <div style="font-size:.78rem; font-weight:800; color:var(--text); margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-clock" style="color:var(--accent);"></i> Status de Abertura da Loja
+          </div>
+          <div style="font-size:.72rem; color:var(--muted); margin-bottom:10px; line-height:1.4;">
+            Padrão automático: <strong>Abre Quinta a Domingo a partir das 19:00</strong>. Fechado Segunda a Quarta.
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-store-override active" data-override="auto" id="btnOverrideAuto">⚡ Automático</button>
+            <button type="button" class="btn-store-override" data-override="open" id="btnOverrideOpen">🟢 Forçar Aberto</button>
+            <button type="button" class="btn-store-override" data-override="closed" id="btnOverrideClosed">🔴 Forçar Fechado</button>
+          </div>
+        </div>
+
         <!-- ABA BEBIDAS -->
         <div class="owner-tab-panel active" id="panelBebidas">
           <div id="ownerList" class="owner-drinks-list" style="margin-top:12px;"></div>
@@ -2596,11 +2934,15 @@
 
         <!-- ABA LANCHES -->
         <div class="owner-tab-panel" id="panelLanches">
-          <p style="font-size:.78rem;color:var(--muted);padding:14px 0 10px;line-height:1.55;">
-            <strong style="color:var(--text);">Especiais</strong> — ative/desative e ajuste o estoque enquanto durarem.
-            O cliente vê “últimas unidades” quando o número fica baixo.
+          <p style="font-size:.78rem;color:var(--muted);padding:4px 0 12px;line-height:1.55;">
+            <strong style="color:var(--text);">Gerencie os lanches</strong> — ative/desative, controle estoque ou cadastre novos.
           </p>
-          <div class="owner-drinks-list" id="ownerBurgerList" style="margin-top:4px;"></div>
+
+          <button type="button" class="btn-open-add-burger" id="btnOpenAddBurger">
+            Adicionar lanche
+          </button>
+
+          <div class="owner-drinks-list" id="ownerBurgerList"></div>
         </div>
 
         <!-- ABA ACOMPANHAMENTOS -->
@@ -2637,6 +2979,71 @@
   </div>
 
   <!-- Toast -->
+  <!-- MODAL CADASTRAR LANCHE -->
+  <div class="add-burger-overlay" id="addBurgerOverlay" aria-hidden="true">
+    <div class="add-burger-modal" role="dialog" aria-labelledby="addBurgerModalTitle">
+      <div class="add-burger-modal-header">
+        <div class="add-burger-modal-title" id="addBurgerModalTitle">Cadastrar lanche</div>
+        <button type="button" class="add-burger-modal-close" id="btnCloseAddBurger" aria-label="Fechar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="add-burger-modal-body">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>Nome do lanche *</label>
+          <input type="text" id="newBurgerName" placeholder="Ex: X-Bacon Especial, Smash Burger...">
+        </div>
+
+        <div class="add-row">
+          <div class="form-group">
+            <label>Preço R$ *</label>
+            <input type="number" id="newBurgerPrice" placeholder="30,00" min="0" step="0.50" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="newBurgerSpecial" style="width:100%; padding:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2); border-radius:10px; font-size:.85rem; outline:none;">
+              <option value="false">Clássico</option>
+              <option value="true">Especial (estoque)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="newBurgerStockGroup" style="display:none; margin-bottom:10px;">
+          <label>Estoque inicial (unidades)</label>
+          <input type="number" id="newBurgerStock" placeholder="20" value="20" min="1" inputmode="numeric">
+        </div>
+
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>Descrição curta *</label>
+          <input type="text" id="newBurgerDescShort" placeholder="Ex: Pão brioche · 200g · cheddar · bacon">
+        </div>
+
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>Descrição detalhada *</label>
+          <textarea id="newBurgerDescFull" rows="2" placeholder="Ex: Pão artesanal na chapa, hambúrguer de 200g..." style="width:100%; padding:10px; background:var(--surface2); color:var(--text); border:1px solid var(--border2); border-radius:10px; font-size:.82rem; font-family:var(--sans); resize:vertical; outline:none;"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom:12px;">
+          <label><i class="fas fa-camera" style="color:var(--accent);"></i> Foto do lanche *</label>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <input type="file" id="newBurgerImgFile" accept="image/*" style="font-size:.8rem; color:var(--muted); background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border2);">
+            <div style="font-size:.68rem; color:var(--dim); text-align:center; font-weight:700; line-height:1.4;">A foto é comprimida automaticamente · para garantir, use URL</div>
+            <input type="url" id="newBurgerImgUrl" placeholder="https://exemplo.com/foto-burger.jpg">
+          </div>
+          <div style="margin-top:12px; display:flex; align-items:center; gap:14px;">
+            <span style="font-size:.75rem; color:var(--muted); font-weight:600;">Preview:</span>
+            <div class="burger-photo-preview" id="newBurgerImgPreview" style="width:85px; height:85px; min-width:85px; border-radius:12px; background:#141414; border:1px solid var(--accent); overflow:hidden; display:flex; align-items:center; justify-content:center;">
+              <span id="newBurgerImgPreviewPlaceholder" style="font-size:.65rem; color:var(--dim); text-align:center; padding:4px;">Sem foto</span>
+              <img id="newBurgerImgPreviewImg" alt="Preview" style="display:none; width:100%; height:100%; object-fit:cover; object-position:center;">
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-add" id="addBurgerBtn"><i class="fas fa-plus"></i> Cadastrar lanche</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast">✓ Cardápio publicado com sucesso!</div>
 
   <!-- CARDÁPIO PRINT OVERLAY -->
@@ -2666,7 +3073,12 @@
             <img src="Logo correta.jpeg" alt="Central Burger">
           </div>
           <div>
-            <div class="brand-name">Central Burger</div>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <div class="brand-name">Central Burger</div>
+              <div id="headerStoreStatus" class="store-status-pill store-status-pill--open">
+                <span class="store-status-dot"></span> <span id="headerStoreStatusText">Aberto</span>
+              </div>
+            </div>
             <span class="brand-sub">naviraí · ms</span>
           </div>
         </div>
@@ -2685,7 +3097,7 @@
         Simples assim.</p>
       <div class="hero-chips">
         <span class="hero-chip hero-chip--free"><i class="fas fa-truck-fast"></i> Entrega grátis</span>
-        <span class="hero-chip"><i class="fas fa-clock"></i> 19h – 23h</span>
+        <span class="hero-chip"><i class="fas fa-clock"></i> Qui a Dom · 19h – 23h</span>
         <span class="hero-chip"><i class="fas fa-fire-flame-curved"></i> Feito na hora</span>
       </div>
     </div>
@@ -2705,6 +3117,9 @@
 
       <!-- STAGE 1 -->
       <div id="stage1" class="stage-panel">
+        <!-- BANNER DE LOJA FECHADA / CRIATIVO -->
+        <div id="closedStoreNoticeContainer"></div>
+
         <div class="stage-title"><span class="stage-title-icon"><i class="fas fa-utensils"></i></span>Monte seu pedido
         </div>
         <div class="burgers-list" id="burgersList"></div>
@@ -2998,15 +3413,19 @@
       return defaultBurgerState();
     }
 
-    function saveBurgerState(st) {
+    function saveBurgerState(st, opts = {}) {
       try { localStorage.setItem(BURGER_MENU_KEY, JSON.stringify(st)); } catch (_) { }
-      if (USE_CLOUD && typeof saveCloudData === 'function') saveCloudData();
+      if (!opts.skipCloud && USE_CLOUD && typeof saveCloudData === 'function') saveCloudData();
     }
 
     let burgerState = loadBurgerState();
+    let customBurgers = [];
+    let currentUploadedBurgerImg = '';
+    let storeStatusOverride = 'auto'; // 'auto' | 'open' | 'closed'
 
     function getMenuItems() {
-      return BURGER_CATALOG.map(item => {
+      const all = [...BURGER_CATALOG, ...customBurgers];
+      return all.map(item => {
         const st = burgerState[String(item.id)] || {};
         const active = st.active !== false;
         const stock = typeof st.stock === 'number' ? st.stock : (item.special ? 0 : 999);
@@ -3074,6 +3493,10 @@
             burgerState = { ...defaultBurgerState(), ...data.burgers };
             try { localStorage.setItem(BURGER_MENU_KEY, JSON.stringify(burgerState)); } catch(e){}
           }
+          if (Array.isArray(data.customBurgers)) customBurgers = data.customBurgers;
+          if (data.storeStatusOverride === 'open' || data.storeStatusOverride === 'closed' || data.storeStatusOverride === 'auto') {
+            storeStatusOverride = data.storeStatusOverride;
+          }
           if (data.adicionais) {
             adicionaisOwnerConfig = data.adicionais;
             try { localStorage.setItem(ADICIONAIS_OWNER_KEY, JSON.stringify(adicionaisOwnerConfig)); } catch(e){}
@@ -3095,38 +3518,160 @@
 
     async function saveCloudData(drinksOverride) {
       if (drinksOverride) availableDrinks = drinksOverride;
+
+      // Comprime fotos base64 grandes antes de enviar (limite free JSONBin ≈ 100KB)
+      if (Array.isArray(customBurgers) && customBurgers.length) {
+        for (let i = 0; i < customBurgers.length; i++) {
+          const b = customBurgers[i];
+          if (b && typeof b.imgSrc === 'string' && b.imgSrc.startsWith('data:image')) {
+            try {
+              customBurgers[i] = {
+                ...b,
+                imgSrc: await compressImageDataUrl(b.imgSrc, 520, 0.62, 38000)
+              };
+            } catch (_) { }
+          }
+        }
+      }
       
       const payload = {
         drinks: availableDrinks,
         burgers: burgerState,
+        customBurgers: customBurgers,
+        storeStatusOverride: storeStatusOverride,
         adicionais: adicionaisOwnerConfig
       };
       const json = JSON.stringify(payload);
+      const sizeKb = Math.round(json.length / 1024);
       
       if (USE_CLOUD) {
+        if (json.length > 98000) {
+          // Última tentativa: remove base64 pesado e mantém só URLs / metadados
+          const slimBurgers = (customBurgers || []).map(b => {
+            if (b && typeof b.imgSrc === 'string' && b.imgSrc.startsWith('data:image') && b.imgSrc.length > 12000) {
+              return { ...b, imgSrc: '' };
+            }
+            return b;
+          });
+          const slimPayload = { ...payload, customBurgers: slimBurgers };
+          const slimJson = JSON.stringify(slimPayload);
+          if (slimJson.length <= 98000) {
+            try {
+              const resSlim = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Master-Key': JSONBIN_MASTER_KEY,
+                  'X-Bin-Versioning': 'false'
+                },
+                body: slimJson
+              });
+              if (resSlim.ok) {
+                customBurgers = slimBurgers;
+                try { localStorage.setItem(STORAGE_KEY, slimJson); } catch (_) { }
+                window.__cbLastCloudError = 'Salvo com aviso: algumas fotos locais eram grandes demais e não foram enviadas. Use URL de imagem da próxima vez.';
+                // Ainda retorna true para não travar o dono — mas avisa
+                console.warn('[CB]', window.__cbLastCloudError);
+                return true;
+              }
+            } catch (_) { }
+          }
+          const msg = `Dados muito grandes para a nuvem gratuita (${sizeKb} KB / máx. ~95 KB). Use URL de foto em vez de arquivo, ou remova lanches com foto pesada.`;
+          console.error('[CB]', msg);
+          window.__cbLastCloudError = msg;
+          try { localStorage.setItem(STORAGE_KEY, json); } catch (_) { }
+          return false;
+        }
         try {
           const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
               'X-Master-Key': JSONBIN_MASTER_KEY,
-              'X-Bin-Versioning': 'false',
-              'X-Bin-Private': 'false'
+              'X-Bin-Versioning': 'false'
             },
             body: json
           });
-          if (!res.ok) throw new Error('Cloud save failed');
+          if (!res.ok) {
+            let detail = '';
+            try { detail = await res.text(); } catch (_) { }
+            const msg = `JSONBin ${res.status}: ${detail || res.statusText}`;
+            console.error('[CB] Cloud save falhou:', msg);
+            window.__cbLastCloudError = msg;
+            // Fallback local para não perder o trabalho
+            try { localStorage.setItem(STORAGE_KEY, json); } catch (_) { }
+            return false;
+          }
           try { localStorage.setItem(STORAGE_KEY, json); } catch (_) { }
+          window.__cbLastCloudError = '';
           return true;
         } catch (e) {
           console.error('[CB] Cloud save falhou:', e);
+          window.__cbLastCloudError = e.message || String(e);
+          try { localStorage.setItem(STORAGE_KEY, json); } catch (_) { }
           return false;
         }
       }
       try {
         localStorage.setItem(STORAGE_KEY, json);
         return true;
-      } catch (e) { return false; }
+      } catch (e) {
+        window.__cbLastCloudError = e.message || String(e);
+        return false;
+      }
+    }
+
+    /** Comprime dataURL (ou carrega URL/arquivo via canvas) para caber no JSONBin free */
+    function compressImageDataUrl(src, maxW = 520, quality = 0.62, targetBytes = 38000) {
+      return new Promise((resolve, reject) => {
+        if (!src || typeof src !== 'string') return resolve(src);
+        // URL remota: não baixa — evita CORS e mantém leve no JSON
+        if (/^https?:\/\//i.test(src)) return resolve(src);
+        if (!src.startsWith('data:image')) return resolve(src);
+
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let w = img.naturalWidth || img.width;
+            let h = img.naturalHeight || img.height;
+            if (!w || !h) return resolve(src);
+            if (w > maxW) {
+              h = Math.round(h * (maxW / w));
+              w = maxW;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+
+            let q = quality;
+            let out = canvas.toDataURL('image/jpeg', q);
+            // Reduz qualidade até caber no alvo
+            while (out.length > targetBytes && q > 0.35) {
+              q -= 0.08;
+              out = canvas.toDataURL('image/jpeg', q);
+            }
+            // Se ainda grande, reduz resolução
+            if (out.length > targetBytes && w > 320) {
+              const scale = 320 / w;
+              canvas.width = 320;
+              canvas.height = Math.max(1, Math.round(h * scale));
+              ctx.fillStyle = '#111';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              out = canvas.toDataURL('image/jpeg', 0.5);
+            }
+            resolve(out);
+          } catch (err) {
+            reject(err);
+          }
+        };
+        img.onerror = () => reject(new Error('Falha ao processar imagem'));
+        img.src = src;
+      });
     }
 
     // ============================================================
@@ -3160,6 +3705,9 @@
       // Renderizar DEPOIS que o cloud load terminou (burgerState já atualizado)
       renderBurgers();
       updateCartUI();
+      updateOverrideBtnStyles();
+      updateStoreStatusUI();
+      setInterval(updateStoreStatusUI, 60000);
 
       setTimeout(() => {
         const loader = document.getElementById('loader');
@@ -3178,6 +3726,7 @@
         if (currentStep === 2) renderAdicionaisPorBurger();
         if (currentStep === 3) renderDrinks();
         updateCartUI();
+        updateStoreStatusUI();
       }
     });
 
@@ -3193,8 +3742,9 @@
         const imgUrl = (typeof STATIC_IMAGES_B64 !== 'undefined' && STATIC_IMAGES_B64[item.imgSrc]) 
           ? STATIC_IMAGES_B64[item.imgSrc] 
           : (item.imgSrc || item.imgB64 || '');
-        const canAdd = item.active && qty < item.stock;
-        const soldOut = !item.active || item.stock <= 0;
+        const storeOpen = isStoreOpenNow();
+        const canAdd = storeOpen && item.active && qty < item.stock;
+        const soldOut = !storeOpen || !item.active || item.stock <= 0;
         const low = item.special && item.active && item.stock > 0 && item.stock <= 6;
         let badgeHtml = item.special
           ? '<span class="card-badge card-badge--special">Especial</span>'
@@ -3232,21 +3782,32 @@
       </div>`;
         el.appendChild(card);
       });
-      el.querySelectorAll('.incr:not([disabled])').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(+b.dataset.id, 1); }));
-      el.querySelectorAll('.decr').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(+b.dataset.id, -1); }));
+      el.querySelectorAll('.incr:not([disabled])').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(b.dataset.id, 1); }));
+      el.querySelectorAll('.decr').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); changeQty(b.dataset.id, -1); }));
       el.querySelectorAll('.burger-card').forEach(card => {
         card.addEventListener('click', () => {
+          if (!isStoreOpenNow()) return;
           const btn = card.querySelector('.incr');
-          if (btn && !btn.disabled) changeQty(+btn.dataset.id, 1);
+          if (btn && !btn.disabled) changeQty(btn.dataset.id, 1);
         });
       });
     }
 
     function changeQty(id, d) {
+      if (d > 0 && !isStoreOpenNow()) {
+        updateStoreStatusUI();
+        const toast = document.getElementById('toast');
+        if (toast) {
+          toast.textContent = '🚫 Loja fechada no momento — pedidos indisponíveis';
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2800);
+        }
+        return;
+      }
       refreshMenuItems();
-      const m = menuItems.find(x => x.id === id);
+      const m = menuItems.find(x => String(x.id) === String(id));
       if (!m) return;
-      const ex = cart.find(i => i.id === id);
+      const ex = cart.find(i => String(i.id) === String(id));
       const curQ = ex ? ex.quantity : 0;
       if (d > 0) {
         if (!m.active || curQ >= m.stock) return;
@@ -3254,8 +3815,8 @@
       if (ex) {
         const nq = ex.quantity + d;
         if (nq <= 0) {
-          cart = cart.filter(i => i.id !== id);
-          Object.keys(adicionaisState).forEach(k => { if (k.startsWith(id + '_')) delete adicionaisState[k]; });
+          cart = cart.filter(i => String(i.id) !== String(id));
+          Object.keys(adicionaisState).forEach(k => { if (k.startsWith(String(id) + '_')) delete adicionaisState[k]; });
         }
         else {
           ex.quantity = nq;
@@ -3465,7 +4026,12 @@
       let icon = 'fas fa-arrow-right';
 
       if (currentStep === 1) {
-        if (cart.length === 0) {
+        if (!isStoreOpenNow()) {
+          main = 'Loja fechada agora';
+          hint = getNextOpenHint();
+          icon = 'fas fa-store-slash';
+          nextBtn.classList.add('btn-next--need-cart');
+        } else if (cart.length === 0) {
           main = 'Escolha um lanche para continuar';
           hint = 'Toque em + no card do lanche';
           icon = 'fas fa-burger';
@@ -3714,6 +4280,16 @@
     // ============================================================
     function validateStep(n) {
       if (n === 1) {
+        if (!isStoreOpenNow()) {
+          updateStoreStatusUI();
+          const toast = document.getElementById('toast');
+          if (toast) {
+            toast.textContent = '🚫 Loja fechada — pedidos indisponíveis agora';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2800);
+          }
+          return false;
+        }
         if (cart.length === 0) { document.getElementById('emptyCartError').style.display = 'flex'; return false; }
         document.getElementById('emptyCartError').style.display = 'none'; return true;
       }
@@ -4229,47 +4805,402 @@ _Pedido enviado via Central Burger App_ ✅`;
       }
     });
 
+    // ============================================================
+    // STATUS DA LOJA (aberto / fechado)
+    // ============================================================
+    function isWithinAutoHours(date = new Date()) {
+      const day = date.getDay(); // 0 Dom ... 4 Qui 5 Sex 6 Sáb
+      const hour = date.getHours();
+      const openDays = [0, 4, 5, 6]; // Qui–Dom
+      if (!openDays.includes(day)) return false;
+      return hour >= 19 && hour < 23;
+    }
+
+    function isStoreOpenNow() {
+      if (storeStatusOverride === 'open') return true;
+      if (storeStatusOverride === 'closed') return false;
+      return isWithinAutoHours();
+    }
+
+    function getNextOpenHint() {
+      if (storeStatusOverride === 'closed') {
+        return 'Pedidos pausados pelo estabelecimento';
+      }
+      const now = new Date();
+      const dayNames = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+      if (isWithinAutoHours(now)) return 'Horário de hoje: 19h às 23h';
+      const openDays = [4, 5, 6, 0]; // Qui Sex Sáb Dom
+      if (openDays.includes(now.getDay()) && now.getHours() < 19) {
+        return `Abrimos hoje às 19h`;
+      }
+      for (let i = 1; i <= 7; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() + i);
+        d.setHours(19, 0, 0, 0);
+        if (openDays.includes(d.getDay())) {
+          return `Próxima abertura: ${dayNames[d.getDay()]} às 19h`;
+        }
+      }
+      return 'Qui a Dom · 19h – 23h';
+    }
+
+    function updateStoreStatusUI() {
+      const open = isStoreOpenNow();
+      const pill = document.getElementById('headerStoreStatus');
+      const pillText = document.getElementById('headerStoreStatusText');
+      const notice = document.getElementById('closedStoreNoticeContainer');
+      const list = document.getElementById('burgersList');
+      const stageTitle = document.querySelector('#stage1 .stage-title');
+
+      if (pill && pillText) {
+        pill.classList.toggle('store-status-pill--open', open);
+        pill.classList.toggle('store-status-pill--closed', !open);
+        pillText.textContent = open ? 'Aberto' : 'Fechado';
+        pill.title = open ? 'Loja aberta para pedidos' : 'Loja fechada — pedidos indisponíveis';
+      }
+
+      if (list) list.classList.toggle('is-store-closed', !open);
+      if (stageTitle) stageTitle.classList.toggle('is-store-closed-title', !open);
+
+      if (notice) {
+        if (open) {
+          notice.innerHTML = '';
+        } else {
+          const hint = getNextOpenHint();
+          notice.innerHTML = `
+            <div class="creative-closed-banner" role="status" aria-live="polite">
+              <div class="creative-closed-header">
+                <div class="creative-closed-icon"><i class="fas fa-store-slash"></i></div>
+                <div>
+                  <div class="creative-closed-eyebrow">Status da loja</div>
+                  <div class="creative-closed-title">FECHADO AGORA</div>
+                </div>
+              </div>
+              <div class="creative-closed-body">
+                No momento <strong>não estamos recebendo pedidos</strong>. Você ainda pode ver o cardápio, mas o pedido fica bloqueado até a abertura.
+              </div>
+              <div class="creative-closed-footer">
+                <span class="creative-closed-pill"><i class="fas fa-clock"></i> ${hint}</span>
+                <span>Qui–Dom · 19h–23h</span>
+              </div>
+            </div>`;
+        }
+      }
+
+      if (typeof updateWizard === 'function') updateWizard();
+    }
+
+    function updateOverrideBtnStyles() {
+      const btnAuto = document.getElementById('btnOverrideAuto');
+      const btnOpen = document.getElementById('btnOverrideOpen');
+      const btnClosed = document.getElementById('btnOverrideClosed');
+      if (!btnAuto || !btnOpen || !btnClosed) return;
+      [btnAuto, btnOpen, btnClosed].forEach(b => b.classList.remove('active'));
+      if (storeStatusOverride === 'auto') btnAuto.classList.add('active');
+      if (storeStatusOverride === 'open') btnOpen.classList.add('active');
+      if (storeStatusOverride === 'closed') btnClosed.classList.add('active');
+      btnAuto.style.border = storeStatusOverride === 'auto' ? '2px solid var(--accent)' : '1px solid var(--border)';
+      btnAuto.style.background = storeStatusOverride === 'auto' ? 'var(--accent-soft)' : 'var(--surface2)';
+      btnOpen.style.border = storeStatusOverride === 'open' ? '2px solid #22c55e' : '1px solid var(--border)';
+      btnOpen.style.background = storeStatusOverride === 'open' ? 'rgba(34,197,94,0.15)' : 'var(--surface2)';
+      btnClosed.style.border = storeStatusOverride === 'closed' ? '2px solid #ef4444' : '1px solid var(--border)';
+      btnClosed.style.background = storeStatusOverride === 'closed' ? 'rgba(239,68,68,0.15)' : 'var(--surface2)';
+    }
+
+    document.getElementById('btnOverrideAuto')?.addEventListener('click', () => {
+      storeStatusOverride = 'auto';
+      updateOverrideBtnStyles();
+      updateStoreStatusUI();
+      saveCloudData();
+    });
+    document.getElementById('btnOverrideOpen')?.addEventListener('click', () => {
+      storeStatusOverride = 'open';
+      updateOverrideBtnStyles();
+      updateStoreStatusUI();
+      saveCloudData();
+    });
+    document.getElementById('btnOverrideClosed')?.addEventListener('click', () => {
+      storeStatusOverride = 'closed';
+      updateOverrideBtnStyles();
+      updateStoreStatusUI();
+      saveCloudData();
+    });
+    updateOverrideBtnStyles();
+
+    // ============================================================
+    // MODAL — ADICIONAR LANCHE
+    // ============================================================
+    const addBurgerOverlay = document.getElementById('addBurgerOverlay');
+    const newBurgerFileEl = document.getElementById('newBurgerImgFile');
+    const newBurgerUrlEl = document.getElementById('newBurgerImgUrl');
+    const newBurgerPreviewBox = document.getElementById('newBurgerImgPreview');
+    const newBurgerPreviewImg = document.getElementById('newBurgerImgPreviewImg');
+    const newBurgerPreviewPlaceholder = document.getElementById('newBurgerImgPreviewPlaceholder');
+    const newBurgerSpecialEl = document.getElementById('newBurgerSpecial');
+    const newBurgerStockGroup = document.getElementById('newBurgerStockGroup');
+
+    function setBurgerPreview(src) {
+      currentUploadedBurgerImg = src || '';
+      if (!newBurgerPreviewImg || !newBurgerPreviewPlaceholder) return;
+      if (src) {
+        newBurgerPreviewImg.src = src;
+        newBurgerPreviewImg.style.display = 'block';
+        newBurgerPreviewPlaceholder.style.display = 'none';
+        if (newBurgerPreviewBox) newBurgerPreviewBox.style.borderColor = 'var(--accent)';
+      } else {
+        newBurgerPreviewImg.removeAttribute('src');
+        newBurgerPreviewImg.style.display = 'none';
+        newBurgerPreviewPlaceholder.style.display = 'block';
+      }
+    }
+
+    function resetAddBurgerForm() {
+      const nameEl = document.getElementById('newBurgerName');
+      const priceEl = document.getElementById('newBurgerPrice');
+      const shortEl = document.getElementById('newBurgerDescShort');
+      const fullEl = document.getElementById('newBurgerDescFull');
+      if (nameEl) nameEl.value = '';
+      if (priceEl) priceEl.value = '';
+      if (shortEl) shortEl.value = '';
+      if (fullEl) fullEl.value = '';
+      if (newBurgerFileEl) newBurgerFileEl.value = '';
+      if (newBurgerUrlEl) newBurgerUrlEl.value = '';
+      if (newBurgerSpecialEl) newBurgerSpecialEl.value = 'false';
+      if (document.getElementById('newBurgerStock')) document.getElementById('newBurgerStock').value = '20';
+      if (newBurgerStockGroup) newBurgerStockGroup.style.display = 'none';
+      setBurgerPreview('');
+    }
+
+    function openAddBurgerModal() {
+      resetAddBurgerForm();
+      if (addBurgerOverlay) {
+        addBurgerOverlay.classList.add('open');
+        addBurgerOverlay.setAttribute('aria-hidden', 'false');
+      }
+      setTimeout(() => document.getElementById('newBurgerName')?.focus(), 180);
+    }
+
+    function closeAddBurgerModal() {
+      if (addBurgerOverlay) {
+        addBurgerOverlay.classList.remove('open');
+        addBurgerOverlay.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    document.getElementById('btnOpenAddBurger')?.addEventListener('click', openAddBurgerModal);
+    document.getElementById('btnCloseAddBurger')?.addEventListener('click', closeAddBurgerModal);
+    addBurgerOverlay?.addEventListener('click', (e) => {
+      if (e.target === addBurgerOverlay) closeAddBurgerModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && addBurgerOverlay?.classList.contains('open')) closeAddBurgerModal();
+    });
+
+    newBurgerSpecialEl?.addEventListener('change', () => {
+      if (newBurgerStockGroup) {
+        newBurgerStockGroup.style.display = newBurgerSpecialEl.value === 'true' ? 'block' : 'none';
+      }
+    });
+
+    newBurgerFileEl?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) {
+        alert('A foto está muito grande. Use uma imagem de até 8 MB (ela será comprimida automaticamente).');
+        newBurgerFileEl.value = '';
+        return;
+      }
+      try {
+        const reader = new FileReader();
+        const raw = await new Promise((resolve, reject) => {
+          reader.onload = (evt) => resolve(evt.target.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        if (newBurgerUrlEl) newBurgerUrlEl.value = '';
+        const compressed = await compressImageDataUrl(raw, 520, 0.62, 38000);
+        setBurgerPreview(compressed);
+      } catch (err) {
+        console.error(err);
+        alert('Não foi possível processar a foto. Tente outra imagem ou use uma URL.');
+        newBurgerFileEl.value = '';
+        setBurgerPreview('');
+      }
+    });
+
+    newBurgerUrlEl?.addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      if (url) {
+        if (newBurgerFileEl) newBurgerFileEl.value = '';
+        setBurgerPreview(url);
+      } else if (!newBurgerFileEl?.files?.length) {
+        setBurgerPreview('');
+      }
+    });
+
+    document.getElementById('addBurgerBtn')?.addEventListener('click', async () => {
+      const name = document.getElementById('newBurgerName')?.value.trim();
+      const price = parseFloat(document.getElementById('newBurgerPrice')?.value) || 0;
+      const descShort = document.getElementById('newBurgerDescShort')?.value.trim() || '';
+      const descFull = document.getElementById('newBurgerDescFull')?.value.trim() || '';
+      const isSpecial = document.getElementById('newBurgerSpecial')?.value === 'true';
+      const stock = isSpecial
+        ? (parseInt(document.getElementById('newBurgerStock')?.value, 10) || 20)
+        : 999;
+
+      if (!name) {
+        alert('Informe o nome do lanche.');
+        document.getElementById('newBurgerName')?.focus();
+        return;
+      }
+      if (price <= 0) {
+        alert('Informe um preço válido maior que R$ 0,00.');
+        document.getElementById('newBurgerPrice')?.focus();
+        return;
+      }
+      if (!descShort) {
+        alert('Informe a descrição curta (ingredientes).');
+        document.getElementById('newBurgerDescShort')?.focus();
+        return;
+      }
+      if (!descFull) {
+        alert('Informe a descrição detalhada.');
+        document.getElementById('newBurgerDescFull')?.focus();
+        return;
+      }
+      if (!currentUploadedBurgerImg) {
+        alert('Envie uma foto ou cole a URL da imagem.');
+        return;
+      }
+
+      const btn = document.getElementById('addBurgerBtn');
+      const orig = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Salvando...';
+      }
+
+      let imgSrc = currentUploadedBurgerImg;
+      try {
+        if (imgSrc.startsWith('data:image')) {
+          imgSrc = await compressImageDataUrl(imgSrc, 480, 0.58, 32000);
+        }
+      } catch (_) { }
+
+      const newBurger = {
+        id: 'c_' + Date.now(),
+        name,
+        descShort,
+        descFull,
+        price,
+        imgSrc,
+        imgPos: 'center center',
+        special: isSpecial,
+        custom: true
+      };
+
+      customBurgers.push(newBurger);
+      burgerState[String(newBurger.id)] = { active: true, stock };
+
+      try {
+        saveBurgerState(burgerState, { skipCloud: true });
+        const ok = await saveCloudData();
+        if (!ok) {
+          customBurgers = customBurgers.filter(b => String(b.id) !== String(newBurger.id));
+          delete burgerState[String(newBurger.id)];
+          saveBurgerState(burgerState, { skipCloud: true });
+          const detail = window.__cbLastCloudError || '';
+          alert(
+            'Não foi possível salvar o lanche na nuvem.\n\n' +
+            (detail ? detail + '\n\n' : '') +
+            'Dica: o plano gratuito do JSONBin aceita no máximo ~100 KB. Prefira colar uma URL da foto em vez de enviar o arquivo.'
+          );
+          return;
+        }
+        refreshMenuItems();
+        renderBurgers();
+        renderOwnerBurgerList();
+        closeAddBurgerModal();
+        resetAddBurgerForm();
+
+        const toast = document.getElementById('toast');
+        if (toast) {
+          toast.textContent = '🍔 Lanche cadastrado com sucesso!';
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2800);
+        }
+      } catch (err) {
+        console.error(err);
+        customBurgers = customBurgers.filter(b => String(b.id) !== String(newBurger.id));
+        delete burgerState[String(newBurger.id)];
+        alert('Não foi possível salvar o lanche. Tente novamente.');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = orig;
+        }
+      }
+    });
+
     function renderOwnerBurgerList() {
       const el = document.getElementById('ownerBurgerList');
       if (!el) return;
       el.innerHTML = '';
-      BURGER_CATALOG.forEach(item => {
+      refreshMenuItems();
+
+      if (menuItems.length === 0) {
+        el.innerHTML = `<div class="owner-empty"><i class="fas fa-burger"></i><p>Nenhum lanche cadastrado.<br>Toque em <strong>Adicionar lanche</strong> para cadastrar.</p></div>`;
+        return;
+      }
+
+      menuItems.forEach(item => {
         const key = String(item.id);
-        const def = defaultBurgerState()[key] || { active: true, stock: 0 };
-        const cur = { ...def, ...burgerState[key] };
+        const def = defaultBurgerState()[key] || { active: true, stock: item.special ? 20 : 999 };
+        const cur = { ...def, ...(burgerState[key] || {}) };
         const on = cur.active !== false;
         const stock = typeof cur.stock === 'number' ? cur.stock : 0;
         const row = document.createElement('div');
         row.className = 'owner-drink-item' + (on ? '' : ' inactive');
+        
         const stockBlock = item.special
           ? `<div class="owner-drink-stock-row">
-        <span class="owner-drink-stock-label">Estoque (edição especial)</span>
+        <span class="owner-drink-stock-label">Estoque</span>
         <div class="owner-stock-ctrl">
           <button type="button" class="owner-stock-btn bskm" data-burger-id="${item.id}">−</button>
           <span class="owner-stock-num" id="bsk-${item.id}">${stock}</span>
           <button type="button" class="owner-stock-btn bskp" data-burger-id="${item.id}">+</button>
         </div>
       </div>`
-          : `<div class="owner-drink-stock-row" style="font-size:.68rem;color:var(--muted)">Simples — estoque livre no app</div>`;
+          : `<div class="owner-drink-stock-row" style="font-size:.68rem;color:var(--muted)">Clássico — estoque livre no app</div>`;
+        
+        const deleteBtnHTML = item.custom ? `<button type="button" class="delete-btn delete-custom-burger" data-del-burger="${item.id}" title="Excluir Lanche" style="margin-left:6px;"><i class="fas fa-trash-can"></i></button>` : '';
+        const imgUrl = (typeof STATIC_IMAGES_B64 !== 'undefined' && STATIC_IMAGES_B64[item.imgSrc])
+          ? STATIC_IMAGES_B64[item.imgSrc]
+          : (item.imgSrc || '');
+
         row.innerHTML = `
       <div class="owner-drink-top">
-        <div class="owner-drink-emoji">${item.special ? '✨' : '🍔'}</div>
+        <div style="width:48px; height:48px; border-radius:8px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#111; flex-shrink:0; border:1px solid var(--border); margin-right:10px;">
+          <img src="${imgUrl}" alt="${item.name}" style="width:100%!important; height:100%!important; object-fit:cover!important; object-position:center!important;">
+        </div>
         <div class="owner-drink-info">
-          <div class="owner-drink-name">${item.name}</div>
+          <div class="owner-drink-name">${item.name} ${item.custom ? '<span style="font-size:.65rem; background:var(--accent-soft); color:var(--accent); padding:2px 6px; border-radius:4px; margin-left:4px;">Novo</span>' : ''}</div>
           <div class="owner-drink-meta">R$ ${item.price.toFixed(2).replace('.', ',')}${item.special ? ' · especial' : ''}</div>
         </div>
         <div class="owner-drink-actions">
           <div class="toggle-btn ${on ? 'on' : ''}" data-burger-toggle="${item.id}"></div>
+          ${deleteBtnHTML}
         </div>
       </div>
       ${stockBlock}`;
         el.appendChild(row);
       });
+
       el.querySelectorAll('[data-burger-toggle]').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = String(btn.getAttribute('data-burger-toggle'));
           const def = defaultBurgerState()[id] || { active: true, stock: 20 };
-          const cur = { ...def, ...burgerState[id] };
+          const cur = { ...def, ...(burgerState[id] || {}) };
           burgerState[id] = { ...cur, active: !(cur.active !== false) };
           saveBurgerState(burgerState);
           refreshMenuItems();
@@ -4277,11 +5208,29 @@ _Pedido enviado via Central Burger App_ ✅`;
           renderOwnerBurgerList();
         });
       });
+
+      el.querySelectorAll('.delete-custom-burger').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-del-burger');
+          if (confirm('Deseja realmente excluir este lanche?')) {
+            customBurgers = customBurgers.filter(b => String(b.id) !== String(id));
+            delete burgerState[id];
+            cart = cart.filter(i => String(i.id) !== String(id));
+            saveBurgerState(burgerState);
+            saveCloudData();
+            refreshMenuItems();
+            renderBurgers();
+            renderOwnerBurgerList();
+            updateCartUI();
+          }
+        });
+      });
+
       el.querySelectorAll('.bskp').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = String(btn.dataset.burgerId);
           const def = defaultBurgerState()[id] || { active: true, stock: 0 };
-          const cur = { ...def, ...burgerState[id] };
+          const cur = { ...def, ...(burgerState[id] || {}) };
           const st = typeof cur.stock === 'number' ? cur.stock : 0;
           burgerState[id] = { ...cur, stock: st + 1 };
           saveBurgerState(burgerState);
@@ -4290,11 +5239,12 @@ _Pedido enviado via Central Burger App_ ✅`;
           renderOwnerBurgerList();
         });
       });
+
       el.querySelectorAll('.bskm').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = String(btn.dataset.burgerId);
           const def = defaultBurgerState()[id] || { active: true, stock: 0 };
-          const cur = { ...def, ...burgerState[id] };
+          const cur = { ...def, ...(burgerState[id] || {}) };
           const st = typeof cur.stock === 'number' ? cur.stock : 0;
           burgerState[id] = { ...cur, stock: Math.max(0, st - 1) };
           saveBurgerState(burgerState);
@@ -4426,11 +5376,19 @@ _Pedido enviado via Central Burger App_ ✅`;
         availableDrinks = JSON.parse(JSON.stringify(ownerDrafts));
         selectedDrinks = {};
         const t = document.getElementById('toast');
+        const warn = window.__cbLastCloudError || '';
+        if (warn && /aviso/i.test(warn)) {
+          alert(warn);
+          window.__cbLastCloudError = '';
+        }
+        t.textContent = '✓ Cardápio publicado com sucesso!';
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2800);
       } else {
+        const detail = window.__cbLastCloudError || '';
         alert(USE_CLOUD
-          ? 'Erro ao salvar na nuvem. Verifique sua conexão e as chaves do JSONBin no arquivo.'
+          ? ('Erro ao salvar na nuvem.\n\n' + (detail ? detail + '\n\n' : '') +
+            'Se você cadastrou lanche com foto do celular, o JSONBin gratuito só aceita ~100 KB no total. Use URL da foto ou remova lanches pesados e tente de novo.')
           : 'Erro ao salvar localmente. Tente novamente.');
       }
     });
