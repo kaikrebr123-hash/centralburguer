@@ -2432,6 +2432,33 @@
     }
     .btn-copy-modal:active { transform: scale(.97); }
     .pix-modal-footer { font-size: .75rem; color: var(--dim); line-height: 1.4; }
+    .pix-steps {
+      display: flex; flex-direction: column; gap: 8px;
+      text-align: left; margin-bottom: 18px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: var(--radius); padding: 12px 14px;
+    }
+    .pix-step {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: .82rem; line-height: 1.35; color: var(--muted);
+    }
+    .pix-step i { width: 18px; text-align: center; margin-top: 2px; flex-shrink: 0; }
+    .pix-step--done { color: var(--wa); font-weight: 700; }
+    .pix-step--now { color: var(--text); font-weight: 700; }
+    .pix-step--now i { color: var(--accent); }
+    .pix-alert {
+      background: rgba(37, 211, 102, .08); border: 1px solid rgba(37, 211, 102, .28);
+      color: var(--text); border-radius: var(--radius); padding: 10px 12px;
+      font-size: .8rem; line-height: 1.4; margin-bottom: 14px; text-align: left;
+    }
+    .pix-alert i { color: var(--wa); margin-right: 6px; }
+    .pix-pay-hint {
+      display: none; margin-top: 14px; padding: 12px 14px;
+      background: rgba(37, 211, 102, .08); border: 1px solid rgba(37, 211, 102, .35);
+      border-radius: var(--radius); font-size: .85rem; line-height: 1.45; color: var(--text);
+    }
+    .pix-pay-hint.show { display: block; }
+    .pix-pay-hint strong { color: var(--wa); }
     
     /* ===== DESKTOP ===== */
     @media(min-width:600px) {
@@ -3415,13 +3442,23 @@
     <div class="loader-bar"></div>
   </div>
 
-  <!-- PIX Overlay -->
+  <!-- PIX Overlay — só abre DEPOIS do pedido no WhatsApp -->
   <div class="pix-overlay" id="pixOverlayModal">
     <div class="pix-modal">
-      <button class="pix-modal-close" id="pixModalClose"><i class="fas fa-times"></i></button>
+      <button class="pix-modal-close" id="pixModalClose" aria-label="Fechar"><i class="fas fa-times"></i></button>
       <div class="pix-icon-large"><i class="fab fa-pix"></i></div>
-      <div class="pix-modal-title">Pagamento via Pix</div>
+      <div class="pix-modal-title">Agora pague o Pix</div>
       <div class="pix-modal-desc">Valor: <strong id="pixModalValue">R$ 0,00</strong></div>
+
+      <div class="pix-steps">
+        <div class="pix-step pix-step--done"><i class="fas fa-check-circle"></i><span>Pedido enviado no WhatsApp</span></div>
+        <div class="pix-step pix-step--now"><i class="fas fa-arrow-right"></i><span>Copie a chave e pague no seu banco</span></div>
+      </div>
+
+      <div class="pix-alert">
+        <i class="fas fa-heart"></i>
+        Só um carinho: confirma que apertou <strong>Enviar</strong> no WhatsApp? Assim a gente recebe seu pedido e já começa a preparar.
+      </div>
       
       <div class="pix-key-box">
          <div class="pix-key-label">Chave Pix (CNPJ)</div>
@@ -3430,10 +3467,10 @@
       </div>
       
       <div class="pix-modal-footer">
-        Falta pouco! Copie a chave e faça o pagamento no seu banco. (O motoboy também leva o QR Code)
+        O motoboy também leva o QR Code na entrega, se preferir pagar depois.
       </div>
       <button class="btn-next btn-next--whatsapp" style="margin-top:16px; padding: 12px; width: 100%; border-radius:12px; font-size: 1.1rem; justify-content: center;" id="pixModalOkBtn">
-        Tudo Certo
+        Já copiei / Fechar
       </button>
     </div>
   </div>
@@ -3822,13 +3859,13 @@
         </div>
 
         <p class="stage-desc" style="margin-bottom:12px;font-weight:bold;color:var(--text);">1. Forma de Pagamento</p>
-        <p class="stage-desc" style="margin-top:-6px;">Como você gostaria de pagar na entrega?</p>
+        <p class="stage-desc" style="margin-top:-6px;">Como você quer pagar? (o pedido só vale depois do WhatsApp)</p>
         <div class="pay-grid">
           <div class="pay-card" data-pay="Pix">
             <div class="pay-icon"><i class="fab fa-pix"></i></div>
             <div class="pay-info">
               <div class="pay-name">Pix</div>
-              <div class="pay-desc">Rápido e prático</div>
+              <div class="pay-desc">Chave aparece depois do Zap</div>
             </div>
           </div>
 
@@ -3847,6 +3884,11 @@
               <div class="pay-desc">Pague em espécie (Troco devolvido no Pix)</div>
             </div>
           </div>
+        </div>
+
+        <div id="pixPayHint" class="pix-pay-hint">
+          <i class="fab fa-whatsapp"></i>
+          A chave Pix aparece assim que você enviar o pedido no WhatsApp. É rapidinho — a gente te mostra o valor e a chave logo em seguida.
         </div>
 
         <div id="trocoSection" style="display:none; margin-top:16px;">
@@ -3869,10 +3911,9 @@
         <div class="wa-notice">
           <div class="wa-notice-icon"><i class="fab fa-whatsapp"></i></div>
           <div class="wa-notice-text">
-            <div class="wa-notice-title">Você será direcionado ao WhatsApp</div>
-            <div class="wa-notice-desc">Seu pedido já estará formatado. <strong>Só apertar Enviar!</strong> Nada mais
-              para fazer.</div>
-            <span class="wa-notice-pill"><i class="fab fa-whatsapp"></i> 1 toque = pedido feito</span>
+            <div class="wa-notice-title">Quase lá — envia pra gente no Zap</div>
+            <div class="wa-notice-desc">Quando estiver pronto, toque em <strong>Enviar pelo WhatsApp</strong> e aperte Enviar. Assim a gente recebe e já começa a preparar o seu.</div>
+            <span class="wa-notice-pill"><i class="fab fa-whatsapp"></i> Pedido chega pelo Zap</span>
           </div>
         </div>
         <div id="reviewContainer"></div>
@@ -4700,12 +4741,10 @@
           document.getElementById('trocoSection').style.display = 'none';
           document.getElementById('payTroco').value = '';
         }
-        
-        if (selectedPayment === 'Pix') {
-          const total = cartTotal() + drinksTotal() + adicionaisTotal();
-          document.getElementById('pixModalValue').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-          document.getElementById('pixOverlayModal').classList.add('open');
-        }
+
+        const pixHint = document.getElementById('pixPayHint');
+        if (pixHint) pixHint.classList.toggle('show', selectedPayment === 'Pix');
+        updateWizard();
       });
     });
 
@@ -4722,12 +4761,16 @@
       });
     }
 
-    document.getElementById('pixModalClose').addEventListener('click', () => {
+    function closePixModal() {
       document.getElementById('pixOverlayModal').classList.remove('open');
-    });
-    document.getElementById('pixModalOkBtn').addEventListener('click', () => {
-      document.getElementById('pixOverlayModal').classList.remove('open');
-    });
+    }
+    function openPixModalAfterOrder(totalValue) {
+      const valueEl = document.getElementById('pixModalValue');
+      if (valueEl) valueEl.innerText = `R$ ${Number(totalValue).toFixed(2).replace('.', ',')}`;
+      document.getElementById('pixOverlayModal').classList.add('open');
+    }
+    document.getElementById('pixModalClose').addEventListener('click', closePixModal);
+    document.getElementById('pixModalOkBtn').addEventListener('click', closePixModal);
 
     function updateWizard() {
       document.querySelectorAll('.step-item').forEach((el, i) => {
@@ -4746,7 +4789,11 @@
 
       if (currentStep === 5) {
         mainEl.textContent = 'Enviar pelo WhatsApp';
-        hintEl.textContent = 'Abre o app com o pedido pronto';
+        if (selectedPayment === 'Pix') {
+          hintEl.textContent = 'Primeiro o Zap — Pix vem logo em seguida';
+        } else {
+          hintEl.textContent = 'A gente recebe pelo WhatsApp';
+        }
         hintEl.hidden = false;
         iconEl.className = 'fab fa-whatsapp';
         nextBtn.classList.add('btn-next--whatsapp');
@@ -4981,6 +5028,8 @@
         const troco = document.getElementById('payTroco').value.trim();
         const tStr = troco ? `(Troco para R$ ${parseFloat(troco).toFixed(2).replace('.', ',')})` : '(Sem troco)';
         payHtml = `<div class="review-item"><span class="review-item-key">Dinheiro</span><span class="review-item-val">${tStr}</span></div>`;
+      } else if (selectedPayment === 'Pix') {
+        payHtml = `<div class="review-item"><span class="review-item-key">Pix</span><span class="review-item-val">Chave após o WhatsApp</span></div>`;
       } else {
         payHtml = `<div class="review-item"><span class="review-item-key">${selectedPayment || '—'}</span><span class="review-item-val">Na entrega</span></div>`;
       }
@@ -5153,6 +5202,9 @@
         else payStr += ' (Sem troco)';
       }
 
+      const paymentWasPix = selectedPayment === 'Pix';
+      const orderTotalNum = cartTotal() + drinksTotal() + adicionaisTotal();
+
       let msg =
         `*PEDIDO — CENTRAL BURGER*
 ━━━━━━━━━━━━━━━━━━━━━━━
@@ -5208,10 +5260,21 @@ _Pedido enviado via Central Burger App_ ✅`;
       selectedDrinks = {};
       adicionaisState = {};
       cart = [];
+      selectedPayment = null;
+      document.querySelectorAll('.pay-card:not(.delivery-type-card)').forEach(c => c.classList.remove('selected'));
+      const pixHintEl = document.getElementById('pixPayHint');
+      if (pixHintEl) pixHintEl.classList.remove('show');
+      const trocoSec = document.getElementById('trocoSection');
+      if (trocoSec) trocoSec.style.display = 'none';
       resetVibeSession();
       updateCartUI();
       renderBurgers();
       showStage(1);
+
+      // Chave Pix só depois do pedido no WhatsApp — evita pagar sem enviar
+      if (paymentWasPix) {
+        setTimeout(() => openPixModalAfterOrder(orderTotalNum), 400);
+      }
     }
 
     // ============================================================
